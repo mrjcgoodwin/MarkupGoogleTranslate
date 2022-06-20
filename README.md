@@ -12,10 +12,10 @@ Usage and continued operation of this module is at the mercy of Google allowing 
 ## Usage
 After you have installed the module to your ProcesWire installation the module will be available in any page template as follows:
 
-`<?php $translate = $modules->get('MarkupGoogleTranslate');?>`
+```php<?php $translate = $modules->get('MarkupGoogleTranslate');?>```
 
 You can output a simple translation widget in your page template:
-`<?php echo $translate->displayTranslateWidget();?>`
+```php<?php echo $translate->displayTranslateWidget();?>```
 
 This will display a basic HTML select field so visitors can choose from available languages. On selecting a language the visitor will be redirected to the translated page.
 
@@ -23,7 +23,7 @@ The Google translate toolbar will display at the top of the page from this point
 
 You can also create a language specific translation link using the public `buildGoogleTranslateUrl` method and supplying it with an ISO language code as. E.g. for a link to a Spanish version of your page:
 
-`<a href="<?php echo $translate->buildGoogleTranslateUrl('es');?>">View Page in Spanish</a>`
+```php<?php echo buildGoogleTranslateUrl('es');?>```
 
 ### Available Languages
 
