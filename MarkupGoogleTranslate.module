@@ -48,7 +48,7 @@ class MarkupGoogleTranslate extends Process implements Module {
   }
 
   /*
-  Known available language codes for translation based
+  Available language codes for translation based
   on https://cloud.google.com/translate/docs/languages
   */
   private function availableLanguages() {
