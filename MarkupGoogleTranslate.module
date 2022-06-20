@@ -18,7 +18,7 @@ class MarkupGoogleTranslate extends Process implements Module {
     return $cleanUrl;
   }
 
-  private function buildGoogleTranslateUrl($languageIsoCode) {
+  public function buildGoogleTranslateUrl($languageIsoCode) {
 
     //Get current page URL
     $currentPagePath = wire('page')->url;
