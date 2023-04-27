@@ -23,7 +23,7 @@ The Google translate toolbar will display at the top of the page from this point
 
 You can also create a language specific translation link using the public `buildGoogleTranslateUrl` method and supplying it with an ISO language code as. E.g. for a link to a Spanish version of your page:
 
- ```<?php echo buildGoogleTranslateUrl('es');?>```
+ ```<?php echo $translate->buildGoogleTranslateUrl('es');?>```
 
 ## This Fork
 Also can pass only custom languages:
