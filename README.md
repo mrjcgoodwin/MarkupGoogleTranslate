@@ -25,6 +25,23 @@ You can also create a language specific translation link using the public `build
 
  ```<?php echo buildGoogleTranslateUrl('es');?>```
 
+ 
+ ## This Fork
+ Also can pass only custom languages:
+
+ ```<?php 
+    $languages = [
+        "German" => "de",
+        "Dutch" => "nl",
+        "English" => "en",
+        "French" => "fr",
+        "Italian" => "it",
+        "Spanish" => "es"
+    ]; 
+    echo buildGoogleTranslateUrl($languages);?>
+    ```
+
+
 ### Available Languages
 
 Available languages and ISO codes for translation based on https://cloud.google.com/translate/docs/languages

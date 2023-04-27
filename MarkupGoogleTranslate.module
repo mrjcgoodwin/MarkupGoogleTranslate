@@ -166,11 +166,18 @@ class MarkupGoogleTranslate extends Process implements Module {
     );
   }
 
-  public function displayTranslateWidget() {
+/**
+ *  @param array $languages = languages passed as title => code to display as options
+ */
+  public function displayTranslateWidget(array $languages = []) {
+
+    // if no languages are declared, use all defaults array items
+    (empty($languages)) ? $languages = $this->availableLanguages() : null;
 
     //Compile the available languages as select field options
     $options = '';
-    foreach ($this->availableLanguages() as $title => $code) {
+    // use defaults or custom argument passed
+    foreach ($languages as $title => $code) {
         $url = $this->buildGoogleTranslateUrl($code);
         $options .= '<option value="'.$url.'">'.$title.'</option>';
     }
