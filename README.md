@@ -25,9 +25,10 @@ You can also create a language specific translation link using the public `build
 
  ```<?php echo $translate->buildGoogleTranslateUrl('es');?>```
 
-## This Fork
+
+## Cybermano Fork
 [V0.0.1]
-Also can pass only custom languages:
+Now can pass only custom languages, to shorten dropdown menu for language options:
 
  ```<?php $languages = ["Deutsch" => "de","English" => "en","Italiano" => "it"]; ?> ```
  ```<?php echo $translate->buildGoogleTranslateUrl($languages);?>``` 
@@ -35,6 +36,12 @@ Also can pass only custom languages:
 [V0.0.2]
 Added two more parameters to better style select options:
  ```<?php echo $translate->buildGoogleTranslateUrl($languages,['div'=>'d-inline-block','select'=>'form-control'],TRUE);?>``` 
+
+[V0.0.3]
+Added configurable field in module to override source language code to pass to google tranlation url; after that, simplifyed the method parameters to pass default language code;
+Also corrected a typo in $translateUrl that previously outputted a double slash in the chunk:
+ ```'translate.goog'.$currentPagePath ```
+Inserted the $scheme in the url, that was probabily forgotten.
 
 
 ### Available Languages
