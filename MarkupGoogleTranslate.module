@@ -188,7 +188,7 @@ class MarkupGoogleTranslate extends Process implements Module {
     //Compile and output
     ($div) ? $out .= '<div clas="'.$classes["div"].'">' : null;
     $out .= '<select class="'.$classes["select"].'" onchange="location = this.options[this.selectedIndex].value;">';
-    // set minimal translation in admin with textdomain to ansure first option translated on user language landing
+    // set minimal translation in admin with textdomain to ensure first option translated on user language landing
     $out .= '<option>'.__('Translate Page', '/site/templates/_translations_it.php').'</option>';
     $out .= $options;
     $out .= '</select>';
