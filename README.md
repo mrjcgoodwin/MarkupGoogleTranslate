@@ -26,10 +26,16 @@ You can also create a language specific translation link using the public `build
  ```<?php echo $translate->buildGoogleTranslateUrl('es');?>```
 
 ## This Fork
+[V0.0.1]
 Also can pass only custom languages:
 
  ```<?php $languages = ["Deutsch" => "de","English" => "en","Italiano" => "it"]; ?> ```
  ```<?php echo buildGoogleTranslateUrl($languages);?>``` 
+
+[V0.0.2]
+Added two more parameters to better style select option:
+ ```<?php echo buildGoogleTranslateUrl($languages,['div'=>'d-inline-block','select'=>'form-control'],TRUE);?>``` 
+
 
 ### Available Languages
 

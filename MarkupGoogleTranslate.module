@@ -168,8 +168,10 @@ class MarkupGoogleTranslate extends Process implements Module {
 
 /**
  *  @param array $languages = languages passed as title => code to display as options
+ *  @param array $classes = classes to pass to div and select
+ *  @param bool FALSE|TRUE $div = TRUE enables wrapper for select
  */
-  public function displayTranslateWidget(array $languages = []) {
+  public function displayTranslateWidget(array $languages = [], array $classes = ['div' => null, 'select' => null], $div = FALSE) {
 
     // if no languages are declared, use all defaults array items
     (empty($languages)) ? $languages = $this->availableLanguages() : null;
@@ -182,11 +184,14 @@ class MarkupGoogleTranslate extends Process implements Module {
         $options .= '<option value="'.$url.'">'.$title.'</option>';
     }
 
+    $out = '';
     //Compile and output
-    $out = '<select onchange="location = this.options[this.selectedIndex].value;">';
-    $out .= '<option>Translate Page</option>';
+    ($div) ? $out .= '<div clas="'.$classes["div"].'">' : null;
+    $out .= '<select class="'.$classes["select"].'" onchange="location = this.options[this.selectedIndex].value;">';
+    $out .= '<option>'.__('Translate Page', '/site/templates/_translations_it.php').'</option>';
     $out .= $options;
     $out .= '</select>';
+    ($div) ? $out .= '</div>' : null;
 
     return $out;
   }
