@@ -5,128 +5,11 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
     public static function getModuleinfo() {
     return [
         'title' => 'Google Page Translate',
-        'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages.',
-        'author' => 'Jonathan Goodwin (warp-design.co.uk) & NewMediaConsulting (modded for multilanguage support)',
+        'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
+        'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting https://www.newmc.it/',
         'version' => 0.2,
     ];
     }
-
-
-    /**
-     * Data as used by the get/set functions
-     *
-     */  
-    protected $availableLanguages = [
-    "Afrikaans" => "af",
-    "Albanian" => "sq",
-    "Amharic" => "am",
-    "Arabic" => "ar",
-    "Armenian" => "hy",
-    "Azerbaijani" => "az",
-    "Basque" => "eu",
-    "Belarusian" => "be",
-    "Bengali" => "bn",
-    "Bosnian" => "bs",
-    "Bulgarian" => "bg",
-    "Catalan" => "ca",
-    "Cebuano" => "ceb",
-    "Chinese (Simplified)" => "zh-CN",
-    "Chinese (Traditional)" => "zh-TW",
-    "Corsican" => "co",
-    "Croatian" => "hr",
-    "Czech" => "cs",
-    "Danish" => "da",
-    "Dutch" => "nl",
-    "English" => "en",
-    "Esperanto" => "eo",
-    "Estonian" => "et",
-    "Finnish" => "fi",
-    "French" => "fr",
-    "Frisian" => "fy",
-    "Galician" => "gl",
-    "Georgian" => "ka",
-    "German" => "de",
-    "Greek" => "el",
-    "Gujarati" => "gu",
-    "Haitian Creole" => "ht",
-    "Hausa" => "ha",
-    "Hawaiian" => "haw",
-    "Hebrew" => "he",
-    "Hindi" => "hi",
-    "Hmong" => "hmn",
-    "Hungarian" => "hu",
-    "Icelandic" => "is",
-    "Igbo" => "ig",
-    "Indonesian" => "id",
-    "Irish" => "ga",
-    "Italian" => "it",
-    "Japanese" => "ja",
-    "Javanese" => "jv",
-    "Kannada" => "kn",
-    "Kazakh" => "kk",
-    "Khmer" => "km",
-    "Kinyarwanda" => "rw",
-    "Korean" => "ko",
-    "Kurdish" => "ku",
-    "Kyrgyz" => "ky",
-    "Lao" => "lo",
-    "Latin" => "la",
-    "Latvian" => "lv",
-    "Lithuanian" => "lt",
-    "Luxembourgish" => "lb",
-    "Macedonian" => "mk",
-    "Malagasy" => "mg",
-    "Malay" => "ms",
-    "Malayalam" => "ml",
-    "Maltese" => "mt",
-    "Maori" => "mi",
-    "Marathi" => "mr",
-    "Mongolian" => "mn",
-    "Myanmar (Burmese)" => "my",
-    "Nepali" => "ne",
-    "Norwegian" => "no",
-    "Nyanja (Chichewa)" => "ny",
-    "Odia (Oriya)" => "or",
-    "Pashto" => "ps",
-    "Persian" => "fa",
-    "Polish" => "pl",
-    "Portuguese" => "pt",
-    "Punjabi" => "pa",
-    "Romanian" => "ro",
-    "Russian" => "ru",
-    "Samoan" => "sm",
-    "Scots Gaelic" => "gd",
-    "Serbian" => "sr",
-    "Sesotho" => "st",
-    "Shona" => "sn",
-    "Sindhi" => "sd",
-    "Sinhala (Sinhalese)" => "si",
-    "Slovak" => "sk",
-    "Slovenian" => "sl",
-    "Somali" => "so",
-    "Spanish" => "es",
-    "Sundanese" => "su",
-    "Swahili" => "sw",
-    "Swedish" => "sv",
-    "Tagalog (Filipino)" => "tl",
-    "Tajik" => "tg",
-    "Tamil" => "ta",
-    "Tatar" => "tt",
-    "Telugu" => "te",
-    "Thai" => "th",
-    "Turkish" => "tr",
-    "Turkmen" => "tk",
-    "Ukrainian" => "uk",
-    "Urdu" => "ur",
-    "Uyghur" => "ug",
-    "Uzbek" => "uz",
-    "Vietnamese" => "vi",
-    "Welsh" => "cy",
-    "Xhosa" => "xh",
-    "Yiddish" => "yi",
-    "Yoruba" => "yo",
-    "Zulu" => "zu"
-    ];
 
     //Utility to clean the URL to match the format Google Likes
     private function cleanUrl($url) {
@@ -286,12 +169,21 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         );
     }
 
+    /*
+    Return Available language flipped as code=>title
+    For AsmSelect usage
+    */
+    private function available_flipped($k) {
+        $arr = array_flip($this->availableLanguages());
+        return $arr[$k];
+    }
+
     /**
-     *  @param array $languages = languages passed as title => code to display as options
      *  @param array $classes = classes to pass to div and select
      *  @param bool FALSE|TRUE $div = TRUE enables wrapper for select
+     *  @param int 0|1 $div = TRUE enables wrapper for select
      */
-    public function displayTranslateWidget(array $languages = [], array $classes = ['div' => null, 'select' => null], $div = FALSE, $googleIcon = 0) {
+    public function displayTranslateWidget(array $classes = ['div' => null, 'select' => null], $div = FALSE, int $googleIcon = 0) {
 
         // if no languages are declared, use all defaults array items
         (empty($languages)) ? $languages = $this->availableLanguages() : null;
@@ -299,15 +191,16 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         //Compile the available languages as select field options
         $options = '';
         // use defaults or custom argument passed
-        foreach ($languages as $title => $code) {
+        foreach ($this->custom_languages as $code) {
             $url = $this->buildGoogleTranslateUrl($code);
-            $options .= '<option value="'.$url.'">'.$title.'</option>';
+            $options .= '<option value="'.$url.'">'.$this->available_flipped($code).'</option>';
         }
 
         $out = '';
         //Compile and output
         ($div) ? $out .= '<div clas="'.$classes["div"].'">' : null;
-        ($googleIcon == 1) ? $out .= '<img class="img-fluid d-inline g-mr-5" src="https://fonts.gstatic.com/s/i/productlogos/translate/v6/24px.svg" alt="Google Translate">' : null;
+        // WIP
+        // ($googleIcon == 1) ? $out .= '<img class="img-fluid d-inline g-mr-5" src="https://fonts.gstatic.com/s/i/productlogos/translate/v6/24px.svg" alt="Google Translate">' : null;
         $out .= '<select class="'.$classes["select"].'" onchange="location = this.options[this.selectedIndex].value;">';
         // set minimal translation in admin with textdomain to ensure first option translated on user language landing
         $out .= '<option>'.__('Translate Page', '/site/templates/_translations_it.php').'</option>';
@@ -320,16 +213,31 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 
     public static function getModuleConfigInputfields(array $data)
     {
+
+        $availableLanguages = array_flip(wire('modules')->get('MarkupGoogleTranslate')->availableLanguages());
+
         $wrap = new InputfieldWrapper();
 
         $f = wire('modules')->get('InputfieldText');
         $f->name = 'default_name';
-        $f->columnWidth = 100;
+        $f->columnWidth = 60;
         $f->minlength = $f->maxlength = 2;
         $f->label = 'Default name code to pass to google url (two letters, ISO 639-1 code)';
         $f->description = 'Set the code abbreviation to pass to the google translation url for "default" processwire language';
         $f->notes = 'If blank, ProcessWire "default" language name will be passed as "en" for the "source language" to start translating from';
         $f->value = (isset($data['default_name'])) ? $data['default_name'] : 'en';
+        $wrap->add($f);
+
+        // custom AsmSelect for available languages
+        $f = wire('modules')->get('InputfieldAsmSelect');
+        $f->name = 'custom_languages';    
+        $f->columnWidth = 40;
+        $f->label = 'Languages to display into select options';
+        $f->description = 'Select one or more languages to show in drop-down select options list';
+        foreach ($availableLanguages as $code => $title){
+            $f->addOption($code,$title);
+        }       
+        if(isset($data['custom_languages'])) $f->value = $data['custom_languages'];
         $wrap->add($f);
 
         return $wrap;

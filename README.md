@@ -27,21 +27,30 @@ You can also create a language specific translation link using the public `build
 
 
 ## Cybermano Fork
-[V0.0.1]
+[V0.0.1] 
+#### Limit drop-down list.
 Now can pass only custom languages, to shorten dropdown menu for language options:
-
  ```<?php $languages = ["Deutsch" => "de","English" => "en","Italiano" => "it"]; ?> ```
  ```<?php echo $translate->buildGoogleTranslateUrl($languages);?>``` 
 
 [V0.0.2]
+#### Classes for styling.
 Added two more parameters to better style select options:
  ```<?php echo $translate->buildGoogleTranslateUrl($languages,['div'=>'d-inline-block','select'=>'form-control'],TRUE);?>``` 
 
 [V0.0.3]
+#### Starting translation language setted in module.
 Added configurable field in module to override source language code to pass to google tranlation url; after that, simplifyed the method parameters to pass default language code;
 Also corrected a typo in $translateUrl that previously outputted a double slash in the chunk:
  ```'translate.goog'.$currentPagePath ```
-Inserted the $scheme in the url, that was probabily forgotten.
+Inserted the https $scheme in the url, that was probabily missed.
+
+[V0.0.4] - STABLE (Major upgrade)
+#### Custom languages setted in module.
+Added InputfieldAsmSelect to limit by module settings the languages shown in frontend drop-down list. 
+N.B. Workaround: InputfieldAsmSelect won\'t return $key=>$value in fronend; added private method to return google available languages flipped array.
+```<?php echo $translate->displayTranslateWidget(['div'=>'d-flex justify-content-between','select'=>'form-control form-control-sm'],TRUE); ?>```
+
 
 
 ### Available Languages
