@@ -180,34 +180,39 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
     }
 
     /**
-     *  @param array $classes = classes to pass to div and select
-     *  @param bool FALSE|TRUE $div = TRUE enables wrapper for select
-     *  @param int 0|1 $div = TRUE enables wrapper for select
+     * @param string $specific = set a two letters ISO code for single and specific language (useful in case of specific translation for single pages)
      */
-    public function displayTranslateWidget(array $classes = ['div' => null, 'select' => null], $div = FALSE, int $googleIcon = 0) {
-
-        // if no languages are declared, use all defaults array items
-        (empty($languages)) ? $languages = $this->availableLanguages() : null;
+    public function displayTranslateWidget(string $specific = '') {
 
         //Compile the available languages as select field options
         $options = '';
         // use defaults or custom argument passed
-        foreach ($this->custom_languages as $code) {
+        // if no languages selected, show all
+        empty($this->custom_languages) ? $custom_languages = $this->availableLanguages() : $custom_languages = $this->custom_languages;
+        if ($specific != '') $custom_languages = [$specific];
+        // build select options
+        foreach ($custom_languages as $code) {
             $url = $this->buildGoogleTranslateUrl($code);
+            // workaraound with flipped array
             $options .= '<option value="'.$url.'">'.$this->available_flipped($code).'</option>';
         }
 
+        ($this->icon != 0) ? $icon = '<img class="" src="https://fonts.gstatic.com/s/i/productlogos/translate/v6/'.$this->icon_size.'px.svg" alt="Google Translate">' : $icon = '';
+
         $out = '';
         //Compile and output
-        ($div) ? $out .= '<div class="'.$classes["div"].'">' : null;
-        // WIP
-        ($googleIcon == 1) ? $out .= '<img class="img-fluid d-inline g-mr-5" src="https://fonts.gstatic.com/s/i/productlogos/translate/v6/24px.svg" alt="Google Translate">' : null;
-        $out .= '<select class="'.$classes["select"].'" onchange="location = this.options[this.selectedIndex].value;">';
+        if ($this->wrapper) $out .= '<div class="'.$this->div_classes.'">';
+        // Place icon on left
+        if ($this->icon == 1) $out .= $icon;
+        // Build Select
+        $out .= '<select class="'.$this->select_classes.'" onchange="location = this.options[this.selectedIndex].value;">';
         // set minimal translation in admin with textdomain to ensure first option translated on user language landing
         $out .= '<option>'.__('Translate Page', '/site/templates/_translations_it.php').'</option>';
         $out .= $options;
         $out .= '</select>';
-        ($div) ? $out .= '</div>' : null;
+        // Place icon on right
+        if ($this->icon == 2) $out .= $icon;
+        if ($this->wrapper) $out .= '</div>';
 
         return $out;
     }
@@ -219,11 +224,13 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 
         $wrap = new InputfieldWrapper();
 
+        // default pw language name to pass as starting language
         $f = wire('modules')->get('InputfieldText');
         $f->name = 'default_name';
-        $f->columnWidth = 60;
+        $f->icon = 'flag-checkered';
+        $f->columnWidth = 50;
         $f->minlength = $f->maxlength = 2;
-        $f->label = 'Default name code to pass to google url (two letters, ISO 639-1 code)';
+        $f->label = 'Name code (two letters, ISO 639-1 code) to pass to google url as starting language';
         $f->description = 'Set the code abbreviation to pass to the google translation url for "default" processwire language';
         $f->notes = 'If blank, ProcessWire "default" language name will be passed as "en" for the "source language" to start translating from';
         $f->value = (isset($data['default_name'])) ? $data['default_name'] : 'en';
@@ -232,14 +239,81 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         // custom AsmSelect for available languages
         $f = wire('modules')->get('InputfieldAsmSelect');
         $f->name = 'custom_languages';    
-        $f->columnWidth = 40;
+        $f->icon = 'language';
+        $f->columnWidth = 50;
         $f->label = 'Languages to display into select options';
         $f->description = 'Select one or more languages to show in drop-down select options list';
+        $f->notes = 'If blank, all available languages are populated as select options';
         foreach ($availableLanguages as $code => $title){
             $f->addOption($code,$title);
         }       
         if(isset($data['custom_languages'])) $f->value = $data['custom_languages'];
         $wrap->add($f);
+
+        // Google Translation product icon
+		$f = wire('modules')->get('InputfieldRadios'); 
+		$f->name = 'icon'; 
+		$f->icon = 'google'; 
+		$f->label = 'Enable Google Translation product icon'; 
+		$f->addOption(0,'No, do not use icon.'); 
+		$f->addOption(1, 'Yes, place on the LEFT.'); 
+		$f->addOption(2, 'Yes, place on the RIGHT.'); 
+		$f->attr('value', 0); 
+        if(isset($data['icon'])) $f->value = $data['icon'];        
+		$f->optionColumns = 1; 
+		$f->columnWidth = 50; 
+		$wrap->add($f);   
+        
+        // Icon size
+		$f = wire('modules')->get('InputfieldRadios'); 
+		$f->name = 'icon_size'; 
+		$f->icon = 'arrows-alt'; 
+		$f->label = 'Size of the icon'; 
+		$f->addOption(16,'Small, 16px'); 
+		$f->addOption(24,'Normal, 24px'); 
+		$f->addOption(32,'Big, 32px'); 
+		$f->addOption(40,'Huge, 40px'); 
+		$f->attr('value', 24); 
+        if(isset($data['icon_size'])) $f->value = $data['icon_size'];        
+		$f->optionColumns = 1; 
+		$f->columnWidth = 50; 
+        $f->showIf = 'icon!=0';
+		$wrap->add($f);          
+
+        // DIV wrapper
+        $f = wire('modules')->get('InputfieldCheckbox'); 
+		$f->name = 'wrapper'; 
+		$f->icon = 'code'; 
+		$f->label = 'Wrap all into a div';
+		$f->label2 = 'Yes';
+		$f->checked($data['wrapper']) ;
+		$f->columnWidth = 50;
+		$f->description = 'Wrap both select and icon (if enabled) into a single div';
+		$wrap->add($f);    
+
+        // DIV classes
+        $f = wire('modules')->get('InputfieldText'); 
+		$f->name = 'div_classes'; 
+		$f->icon = 'file-code-o'; 
+		$f->label = 'Optional classes for DIV styling';
+		$f->description = 'Write classes as html attribute (without quotes, nor dots)';
+		$f->notes = 'Eg. d-flex justif-content-between';
+        if(isset($data['div_classes'])) $f->value = $data['div_classes'];        
+		$f->columnWidth = 50;
+        $f->showIf = 'wrapper=1';
+		$wrap->add($f);
+
+        // SELECT classes
+        $f = wire('modules')->get('InputfieldText'); 
+		$f->name = 'select_classes'; 
+		$f->icon = 'mouse-pointer'; 
+		$f->label = 'Optional classes for SELECT styling';
+		$f->description = 'Write classes as html attribute (without quotes, nor dots)';
+		$f->notes = 'Eg. according to bootstrap framework: form-control form-control-sm';
+        if(isset($data['select_classes'])) $f->value = $data['select_classes'];        
+		$f->columnWidth = 100;
+		$wrap->add($f);          
+
 
         return $wrap;
     }

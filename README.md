@@ -51,6 +51,21 @@ Added InputfieldAsmSelect to limit by module settings the languages shown in fro
 N.B. Workaround: InputfieldAsmSelect won\'t return $key=>$value in fronend; added private method to return google available languages flipped array.
 ```<?php echo $translate->displayTranslateWidget(['div'=>'d-flex justify-content-between','select'=>'form-control form-control-sm'],TRUE); ?>```
 
+[V0.0.5] - Styling and other stuffs
+#### Icon, wrapper and styles
+Configurable options to show Google Translator Product icon, wrap icon and select into a div, styling classes to pass either to the DIV and to the SELECT, and restored specific translations.
+---
+Calling method is now as original init:
+ ```<?php $translate = $modules->get('MarkupGoogleTranslate');?>```
+ ```<?php echo $translate->displayTranslateWidget();?>```
+or in one code line:
+ ```<?php echo $modules->get('MarkupGoogleTranslate')->displayTranslateWidget();?>```
+---
+Restored the specific language override as public call:
+ ```<?php echo $modules->get('MarkupGoogleTranslate')->buildGoogleTranslateUrl('es');?>```
+
+
+
 
 
 ### Available Languages
