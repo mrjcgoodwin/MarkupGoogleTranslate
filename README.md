@@ -54,15 +54,15 @@ N.B. Workaround: InputfieldAsmSelect won\'t return $key=>$value in fronend; adde
 [V0.0.5] - Styling and other stuffs
 #### Icon, wrapper and styles
 Configurable options to show Google Translator Product icon, wrap icon and select into a div, styling classes to pass either to the DIV and to the SELECT, and restored specific translations.
-
+---
 Calling method is now as original init:
  ```<?php $translate = $modules->get('MarkupGoogleTranslate');?>```
  ```<?php echo $translate->displayTranslateWidget();?>```
 or in one code line:
  ```<?php echo $modules->get('MarkupGoogleTranslate')->displayTranslateWidget();?>```
-
-Restored the specific language override as public call:
- ```<?php echo $modules->get('MarkupGoogleTranslate')->buildGoogleTranslateUrl('es');?>```
+---
+Restored the specific language override as public call, passing an array of values (from single to multiple):
+ ```<?php echo $modules->get('MarkupGoogleTranslate')->buildGoogleTranslateUrl(['es','fr']);?>```
 
 
 

@@ -6,7 +6,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
     return [
         'title' => 'Google Page Translate',
         'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
-        'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting https://www.newmc.it/',
+        'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting www.newmc.it',
         'version' => 0.2,
     ];
     }
@@ -180,16 +180,16 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
     }
 
     /**
-     * @param string $specific = set a two letters ISO code for single and specific language (useful in case of specific translation for single pages)
+     * @param array $specific = set a two letters ISO code for single and specific language (useful in case of specific translation for single pages)
      */
-    public function displayTranslateWidget(string $specific = '') {
+    public function displayTranslateWidget(array $specific = []) {
 
         //Compile the available languages as select field options
         $options = '';
         // use defaults or custom argument passed
         // if no languages selected, show all
         empty($this->custom_languages) ? $custom_languages = $this->availableLanguages() : $custom_languages = $this->custom_languages;
-        if ($specific != '') $custom_languages = [$specific];
+        if (!empty($specific)) $custom_languages = $specific;
         // build select options
         foreach ($custom_languages as $code) {
             $url = $this->buildGoogleTranslateUrl($code);
@@ -230,9 +230,10 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         $f->icon = 'flag-checkered';
         $f->columnWidth = 50;
         $f->minlength = $f->maxlength = 2;
+        $f->size = 1;
         $f->label = 'Name code (two letters, ISO 639-1 code) to pass to google url as starting language';
-        $f->description = 'Set the code abbreviation to pass to the google translation url for "default" processwire language';
-        $f->notes = 'If blank, ProcessWire "default" language name will be passed as "en" for the "source language" to start translating from';
+        $f->description = 'Set the code abbreviation to pass to the google translation url for "default" processwire language.';
+        $f->notes = 'If blank, ProcessWire "default" language name will be passed as "en" for the "source language" to start translating from.';
         $f->value = (isset($data['default_name'])) ? $data['default_name'] : 'en';
         $wrap->add($f);
 
@@ -243,7 +244,10 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         $f->columnWidth = 50;
         $f->label = 'Languages to display into select options';
         $f->description = 'Select one or more languages to show in drop-down select options list';
-        $f->notes = 'If blank, all available languages are populated as select options';
+        $f->notes = 'If blank, all available languages are populated as select options.
+        
+        Into template page, it could be overrided by passing an array of ISO codes eg.:
+        ```echo wire("modules")->get("MarkupGoogleTranslate")->displayTranslateWidget(["es","fr"]);```';
         foreach ($availableLanguages as $code => $title){
             $f->addOption($code,$title);
         }       
