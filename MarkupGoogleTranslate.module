@@ -272,8 +272,8 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 		$f = wire('modules')->get('InputfieldRadios'); 
 		$f->name = 'icon'; 
 		$f->icon = 'google'; 
-		$f->label = 'Enable Google Translate product icon'; 
-		$f->addOption(0,'No, do not use icon.'); 
+		$f->label = 'Show Google Translate product icon'; 
+		$f->addOption(0,'No, do not show icon.'); 
 		$f->addOption(1, 'Yes, place on the LEFT.'); 
 		$f->addOption(2, 'Yes, place on the RIGHT.'); 
 		$f->attr('value', 0); 
