@@ -207,7 +207,8 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         // Build Select
         $out .= '<select class="'.$this->select_classes.'" onchange="location = this.options[this.selectedIndex].value;">';
         // set minimal translation in admin with textdomain to ensure first option translated on user language landing
-        $out .= '<option>'.__('Translate Page', '/site/templates/_translations_it.php').'</option>';
+        ($this->first_opton == '') ? $label = 'Translate page' : $label = $this->first_opton;
+        $out .= '<option>'.$label.'</option>';
         $out .= $options;
         $out .= '</select>';
         // Place icon on right
@@ -228,13 +229,26 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         $f = wire('modules')->get('InputfieldText');
         $f->name = 'default_name';
         $f->icon = 'flag-checkered';
-        $f->columnWidth = 50;
+        $f->columnWidth = 25;
         $f->minlength = $f->maxlength = 2;
         $f->size = 1;
-        $f->label = 'Name code (two letters, ISO 639-1 code) to pass to google url as starting language';
-        $f->description = 'Set the code abbreviation to pass to the google translation url for "default" processwire language.';
-        $f->notes = 'If blank, ProcessWire "default" language name will be passed as "en" for the "source language" to start translating from.';
+        $f->label = 'Name code as starting language';
+        $f->description = 'ISO 639-1 code (two letters) to pass the "default" processwire language to Google Translation url as source language to start translating from.';
+        $f->notes = 'If blank, ProcessWire "default" language name will be passed as "en".';
         $f->value = (isset($data['default_name'])) ? $data['default_name'] : 'en';
+        $wrap->add($f);
+
+        // default pw language name to pass as starting language
+        $f = wire('modules')->get('InputfieldText');
+        $f->name = 'first_opton';
+        $f->icon = 'font';
+        $f->columnWidth = 25;
+        $f->label = 'First option label for the html select tag';
+        $f->description = 'Avoids specific multi language translation for this label.
+        
+        ';
+        $f->notes = 'If blank, will be populated as "Translate page".';
+        $f->value = (isset($data['first_opton'])) ? $data['first_opton'] : '';
         $wrap->add($f);
 
         // custom AsmSelect for available languages
