@@ -62,7 +62,7 @@ Calling method is now as original module:
 or in one code line:
  ```<?php echo $modules->get('MarkupGoogleTranslate')->displayTranslateWidget();?>```
 
-Restored the specific language override as public call, passing an array of values (for single languages or multiple ones):
+Restored the specific language override as public call, passing an array of language codes (for single languages or multiple ones):
  ```<?php echo $modules->get('MarkupGoogleTranslate')->buildGoogleTranslateUrl(['es','fr']);?>```
 
 

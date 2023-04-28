@@ -7,7 +7,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         'title' => 'Google Page Translate',
         'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
         'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting www.newmc.it',
-        'version' => 0.2,
+        'version' => 0.5,
     ];
     }
 
@@ -193,7 +193,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         // build select options
         foreach ($custom_languages as $code) {
             $url = $this->buildGoogleTranslateUrl($code);
-            // workaraound with flipped array
+            // workaround with flipped array
             $options .= '<option value="'.$url.'">'.$this->available_flipped($code).'</option>';
         }
 
@@ -206,7 +206,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         if ($this->icon == 1) $out .= $icon;
         // Build Select
         $out .= '<select class="'.$this->select_classes.'" onchange="location = this.options[this.selectedIndex].value;">';
-        // set minimal translation in admin with textdomain to ensure first option translated on user language landing
+        // set first option label override
         ($this->first_option == '') ? $label = 'Translate page' : $label = $this->first_option;
         $out .= '<option>'.$label.'</option>';
         $out .= $options;
@@ -233,8 +233,8 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         $f->minlength = $f->maxlength = 2;
         $f->size = 1;
         $f->label = 'Name code as starting language';
-        $f->description = 'ISO 639-1 code (two letters) to pass the "default" processwire language to Google Translation url as source language to start translating from.';
-        $f->notes = 'If blank, ProcessWire "default" language name will be passed as "en".';
+        $f->description = 'ISO 639-1 code (two letters) to pass the "default" processwire language to Google Translation url as source language to start translating from';
+        $f->notes = 'If blank, ProcessWire "default" language name will be passed as "en"';
         $f->value = (isset($data['default_name'])) ? $data['default_name'] : 'en';
         $wrap->add($f);
 
@@ -244,10 +244,10 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         $f->icon = 'font';
         $f->columnWidth = 25;
         $f->label = 'First option label for the html select tag';
-        $f->description = 'Avoids specific multi language translation for this label.
+        $f->description = 'Avoids specific multi language translation for this label
         
         ';
-        $f->notes = 'If blank, will be populated as "Translate page".';
+        $f->notes = 'If blank, will be populated as "Translate page"';
         $f->value = (isset($data['first_option'])) ? $data['first_option'] : '';
         $wrap->add($f);
 
@@ -258,7 +258,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         $f->columnWidth = 50;
         $f->label = 'Languages to display into select options';
         $f->description = 'Select one or more languages to show in drop-down select options list';
-        $f->notes = 'If blank, all available languages are populated as select options.
+        $f->notes = 'If blank, all available languages are populated as select options
         
         Into template page, it could be overrided by passing an array of ISO codes eg.:
         ```echo wire("modules")->get("MarkupGoogleTranslate")->displayTranslateWidget(["es","fr"]);```';
@@ -273,9 +273,9 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 		$f->name = 'icon'; 
 		$f->icon = 'google'; 
 		$f->label = 'Show Google Translate product icon'; 
-		$f->addOption(0,'No, do not show icon.'); 
-		$f->addOption(1, 'Yes, place on the LEFT.'); 
-		$f->addOption(2, 'Yes, place on the RIGHT.'); 
+		$f->addOption(0,'No, do not show icon'); 
+		$f->addOption(1, 'Yes, place on the LEFT'); 
+		$f->addOption(2, 'Yes, place on the RIGHT'); 
 		$f->attr('value', 0); 
         if(isset($data['icon'])) $f->value = $data['icon'];        
 		$f->optionColumns = 1; 
