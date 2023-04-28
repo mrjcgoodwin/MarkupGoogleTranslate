@@ -199,9 +199,9 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 
         $out = '';
         //Compile and output
-        ($div) ? $out .= '<div clas="'.$classes["div"].'">' : null;
+        ($div) ? $out .= '<div class="'.$classes["div"].'">' : null;
         // WIP
-        // ($googleIcon == 1) ? $out .= '<img class="img-fluid d-inline g-mr-5" src="https://fonts.gstatic.com/s/i/productlogos/translate/v6/24px.svg" alt="Google Translate">' : null;
+        ($googleIcon == 1) ? $out .= '<img class="img-fluid d-inline g-mr-5" src="https://fonts.gstatic.com/s/i/productlogos/translate/v6/24px.svg" alt="Google Translate">' : null;
         $out .= '<select class="'.$classes["select"].'" onchange="location = this.options[this.selectedIndex].value;">';
         // set minimal translation in admin with textdomain to ensure first option translated on user language landing
         $out .= '<option>'.__('Translate Page', '/site/templates/_translations_it.php').'</option>';
