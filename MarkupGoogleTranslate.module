@@ -207,7 +207,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         // Build Select
         $out .= '<select class="'.$this->select_classes.'" onchange="location = this.options[this.selectedIndex].value;">';
         // set minimal translation in admin with textdomain to ensure first option translated on user language landing
-        ($this->first_opton == '') ? $label = 'Translate page' : $label = $this->first_opton;
+        ($this->first_option == '') ? $label = 'Translate page' : $label = $this->first_option;
         $out .= '<option>'.$label.'</option>';
         $out .= $options;
         $out .= '</select>';
@@ -240,7 +240,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 
         // default pw language name to pass as starting language
         $f = wire('modules')->get('InputfieldText');
-        $f->name = 'first_opton';
+        $f->name = 'first_option';
         $f->icon = 'font';
         $f->columnWidth = 25;
         $f->label = 'First option label for the html select tag';
@@ -248,7 +248,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         
         ';
         $f->notes = 'If blank, will be populated as "Translate page".';
-        $f->value = (isset($data['first_opton'])) ? $data['first_opton'] : '';
+        $f->value = (isset($data['first_option'])) ? $data['first_option'] : '';
         $wrap->add($f);
 
         // custom AsmSelect for available languages
