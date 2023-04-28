@@ -254,7 +254,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 		$f = wire('modules')->get('InputfieldRadios'); 
 		$f->name = 'icon'; 
 		$f->icon = 'google'; 
-		$f->label = 'Enable Google Translation product icon'; 
+		$f->label = 'Enable Google Translate product icon'; 
 		$f->addOption(0,'No, do not use icon.'); 
 		$f->addOption(1, 'Yes, place on the LEFT.'); 
 		$f->addOption(2, 'Yes, place on the RIGHT.'); 
@@ -297,7 +297,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 		$f->icon = 'file-code-o'; 
 		$f->label = 'Optional classes for DIV styling';
 		$f->description = 'Write classes as html attribute (without quotes, nor dots)';
-		$f->notes = 'Eg. d-flex justif-content-between';
+		$f->notes = 'Eg. d-flex justify-content-between';
         if(isset($data['div_classes'])) $f->value = $data['div_classes'];        
 		$f->columnWidth = 50;
         $f->showIf = 'wrapper=1';
