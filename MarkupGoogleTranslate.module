@@ -22,6 +22,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 
         // User language
         (wire('user')->language->name == 'default') ? $userLang = $this->default_name : $userLang = wire('user')->language->name;
+        ($userLang == '') ? $userLang = 'en' : null;
 
         //Get current page URL
         $currentPagePath = wire('page')->url;
