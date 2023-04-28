@@ -66,7 +66,7 @@ Restored the specific language override as public call, passing an array of lang
  ```<?php echo $modules->get('MarkupGoogleTranslate')->buildGoogleTranslateUrl(['es','fr']);?>```
 
 [V0.0.6] - Restored only https scheme
-It seems that Google accepts only SSL certificates...
+It seems that Google accepts only SSL certificates, expecially on mobile...
 
 
 
