@@ -7,7 +7,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         'title' => 'Google Page Translate',
         'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
         'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting www.newmc.it',
-        'version' => 0.7,
+        'version' => 0.8,
     ];
     }
 
@@ -59,7 +59,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
     Available language codes for translation based
     on https://cloud.google.com/translate/docs/languages
     */
-    private function availableLanguages() {
+    public function availableLanguages() {
 
         return array(
             "Afrikaans" => "af",
@@ -220,124 +220,6 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         if ($this->wrapper) $out .= '</div>';
 
         return $out;
-    }
-
-    public static function getModuleConfigInputfields(array $data)
-    {
-
-        $availableLanguages = array_flip(wire('modules')->get('MarkupGoogleTranslate')->availableLanguages());
-
-        $wrap = new InputfieldWrapper();
-
-        // default pw language name to pass as starting language
-        $f = wire('modules')->get('InputfieldText');
-        $f->name = 'default_name';
-        $f->icon = 'flag-checkered';
-        $f->columnWidth = 25;
-        $f->minlength = $f->maxlength = 2;
-        $f->size = 1;
-        $f->label = 'Name code as starting language';
-        $f->description = 'ISO 639-1 code (two letters) to pass the "default" processwire language to Google Translation url as source language to start translating from';
-        $f->notes = 'If blank, ProcessWire "default" language name will be passed as "en"';
-        $f->value = (isset($data['default_name'])) ? $data['default_name'] : 'en';
-        $wrap->add($f);
-
-        // default pw language name to pass as starting language
-        $f = wire('modules')->get('InputfieldText');
-        $f->name = 'first_option';
-        $f->icon = 'font';
-        $f->columnWidth = 25;
-        $f->label = 'First option label for the html select tag';
-        $f->description = 'Avoids specific multi language translation for this label
-        
-        ';
-        $f->notes = 'If blank, will be populated as "Translate page"';
-        $f->value = (isset($data['first_option'])) ? $data['first_option'] : '';
-        $wrap->add($f);
-
-        // custom AsmSelect for available languages
-        $f = wire('modules')->get('InputfieldAsmSelect');
-        $f->name = 'custom_languages';    
-        $f->icon = 'language';
-        $f->columnWidth = 50;
-        $f->label = 'Languages to display into select options';
-        $f->description = 'Select one or more languages to show in drop-down select options list';
-        $f->notes = 'If blank, all available languages are populated as select options
-        
-        Into template page, it could be overrided by passing an array of ISO codes eg.:
-        ```echo wire("modules")->get("MarkupGoogleTranslate")->displayTranslateWidget(["es","fr"]);```';
-        foreach ($availableLanguages as $code => $title){
-            $f->addOption($code,$title);
-        }       
-        if(isset($data['custom_languages'])) $f->value = $data['custom_languages'];
-        $wrap->add($f);
-
-        // Google Translation product icon
-		$f = wire('modules')->get('InputfieldRadios'); 
-		$f->name = 'icon'; 
-		$f->icon = 'google'; 
-		$f->label = 'Show Google Translate product icon'; 
-		$f->addOption(0,'No, do not show icon'); 
-		$f->addOption(1, 'Yes, place on the LEFT'); 
-		$f->addOption(2, 'Yes, place on the RIGHT'); 
-		$f->attr('value', 0); 
-        if(isset($data['icon'])) $f->value = $data['icon'];        
-		$f->optionColumns = 1; 
-		$f->columnWidth = 50; 
-		$wrap->add($f);   
-        
-        // Icon size
-		$f = wire('modules')->get('InputfieldRadios'); 
-		$f->name = 'icon_size'; 
-		$f->icon = 'arrows-alt'; 
-		$f->label = 'Size of the icon'; 
-		$f->addOption(16,'Small, 16px'); 
-		$f->addOption(24,'Normal, 24px'); 
-		$f->addOption(32,'Big, 32px'); 
-		$f->addOption(40,'Huge, 40px'); 
-		$f->attr('value', 24); 
-        if(isset($data['icon_size'])) $f->value = $data['icon_size'];        
-		$f->optionColumns = 1; 
-		$f->columnWidth = 50; 
-        $f->showIf = 'icon!=0';
-		$wrap->add($f);          
-
-        // DIV wrapper
-        $f = wire('modules')->get('InputfieldCheckbox'); 
-		$f->name = 'wrapper'; 
-		$f->icon = 'code'; 
-		$f->label = 'Wrap all into a div';
-		$f->label2 = 'Yes';
-		$f->checked($data['wrapper']) ;
-		$f->columnWidth = 50;
-		$f->description = 'Wrap both select and icon (if enabled) into a single div';
-		$wrap->add($f);    
-
-        // DIV classes
-        $f = wire('modules')->get('InputfieldText'); 
-		$f->name = 'div_classes'; 
-		$f->icon = 'file-code-o'; 
-		$f->label = 'Optional classes for DIV styling';
-		$f->description = 'Write classes as html attribute (without quotes, nor dots)';
-		$f->notes = 'Eg. d-flex justify-content-between';
-        if(isset($data['div_classes'])) $f->value = $data['div_classes'];        
-		$f->columnWidth = 50;
-        $f->showIf = 'wrapper=1';
-		$wrap->add($f);
-
-        // SELECT classes
-        $f = wire('modules')->get('InputfieldText'); 
-		$f->name = 'select_classes'; 
-		$f->icon = 'mouse-pointer'; 
-		$f->label = 'Optional classes for SELECT styling';
-		$f->description = 'Write classes as html attribute (without quotes, nor dots)';
-		$f->notes = 'Eg. according to bootstrap framework: form-control form-control-sm';
-        if(isset($data['select_classes'])) $f->value = $data['select_classes'];        
-		$f->columnWidth = 100;
-		$wrap->add($f);          
-
-
-        return $wrap;
     }
 
 }
