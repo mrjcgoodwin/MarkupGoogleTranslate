@@ -29,7 +29,7 @@ Restored the specific language override as public call, passing an array of lang
  ```<?php echo $modules->get('MarkupGoogleTranslate')->buildGoogleTranslateUrl(['es','fr']);?>```
 
 #### [V0.0.4] - Custom languages setted in module [MAJOR]
-Added InputfieldAsmSelect to limit by module settings the languages shown in frontend drop-down list. 
+Added InputfieldAsmSelect to limit by module settings the languages shown in frontend drop-down list.
 N.B. Workaround: InputfieldAsmSelect won\'t return $key=>$value in fronend; added private method to return google available languages flipped array.
 
 ```<?php echo $translate->displayTranslateWidget(['div'=>'d-flex justify-content-between','select'=>'form-control form-control-sm'],TRUE); ?>```
