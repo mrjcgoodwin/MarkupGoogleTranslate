@@ -3,7 +3,7 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 ## Cybermano fork
 
-### Changeleogs
+### Changelogs
 
 [V0.0.8] - ModuleConfig separated from module
 Created a ```MarkupGoogleTranslateConfig.php``` to gather config data separated from the module itself (much more readble) 
