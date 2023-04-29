@@ -7,7 +7,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         'title' => 'Google Page Translate',
         'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
         'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting www.newmc.it',
-        'version' => 0.6,
+        'version' => 0.7,
     ];
     }
 
@@ -45,11 +45,11 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
          *  It seems that Google accept only SSL cerificates (only https, not http)
          */
         //Check if we're using http/https
-        // $rootUrl = wire('pages')->get('/')->httpUrl;
-        // $scheme = (strpos($rootUrl,'https') !== false) ? 'https' : 'http' ;
+        $rootUrl = wire('pages')->get('/')->httpUrl;
+        $scheme = (strpos($rootUrl,'https') !== false) ? 'https' : 'http' ;
 
         //Combine to build the translate URL
-        $translateUrl = 'https://'.$host.'.translate.goog'.$currentPagePath.'?_x_tr_sch=http&_x_tr_sl='.$userLang.'&_x_tr_tl='.$languageIsoCode.'&_x_tr_hl=en&_x_tr_pto=wapp';
+        $translateUrl = 'https://'.$host.'.translate.goog'.$currentPagePath.'?_x_tr_sch='.$scheme.'&_x_tr_sl='.$userLang.'&_x_tr_tl='.$languageIsoCode.'&_x_tr_hl='.$languageIsoCode.'&_x_tr_pto=wapp';
 
         return $translateUrl;
 
