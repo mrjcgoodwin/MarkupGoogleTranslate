@@ -6,7 +6,7 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 ### Changeleogs
 
 #### [V0.0.7] - Language code passed to Google interface and restored ```$scheme``` (https/http)
-Passed ```$languageIsoCode```to the url chunk ```hl=XX``` instead of ```hl=en```to match user required language
+Passed ```$languageIsoCode```to the url chunk ```hl=XX``` instead of ```hl=en```to match user required language.
 Restored ```$scheme``` (https/http) in the url previously removed (ad originally not used in the forked repo)
 
 #### [V0.0.6] - Restored only https scheme
