@@ -31,7 +31,7 @@ You can also create a language specific translation link using the public `build
 ## To Do
 Passing user language to the Google Translate interface language in the url chunk hl=XX
 
-
+---
 
 [V0.0.1] 
 #### Limit drop-down list.
