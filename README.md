@@ -26,7 +26,13 @@ You can also create a language specific translation link using the public `build
  ```<?php echo $translate->buildGoogleTranslateUrl('es');?>```
 
 
-## Cybermano Fork
+# Cybermano Fork
+
+## To Do
+Passing user language to the Google Translate interface language in the url chunk hl=XX
+
+
+
 [V0.0.1] 
 #### Limit drop-down list.
 Now can pass only custom languages, to shorten dropdown menu for language options:
