@@ -26,7 +26,7 @@ You can also create a language specific translation link using the public `build
  ```<?php echo $translate->buildGoogleTranslateUrl('es');?>```
 
 
-# Cybermano Fork
+# Cybermano fork
 
 ## To Do
 Passing user language to the Google Translate interface language in the url chunk hl=XX
@@ -75,7 +75,8 @@ Restored the specific language override as public call, passing an array of lang
 [V0.0.6] - Restored only https scheme
 It seems that Google accepts only SSL certificates, expecially on mobile...
 
-
+##### End Cybermano fork
+---
 
 
 ### Available Languages
