@@ -61,3 +61,6 @@ Now can pass only custom languages, to shorten dropdown menu for language option
 
  ```<?php $languages = ["Deutsch" => "de","English" => "en","Italiano" => "it"]; ?> ```
  ```<?php echo $translate->buildGoogleTranslateUrl($languages);?>```
+
+### Roadmap
+- Flag icons beside nationality labels (evaluating best approach to implement: maybe png by cdn?)
