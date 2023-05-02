@@ -13,8 +13,8 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 
     //Utility to clean the URL to match the format Google Likes
     private function cleanUrl($url) {
-        $cleanUrl = str_replace('-','--',$url);
-        $cleanUrl = str_replace('.','-',$cleanUrl);
+        // $cleanUrl = str_replace('-','--',$url);
+        $cleanUrl = str_replace('.','-',$url);
         return $cleanUrl;
     }
 
