@@ -9,6 +9,8 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 #### MILESTONE - RELEASE CANDIDATE
 Added options to override languages by single templates and page ids (single, multiple and ranges)
 
+---
+
 [V0.0.9] - ModuleConfig override templates.
 Added options to override languages by templates
 
