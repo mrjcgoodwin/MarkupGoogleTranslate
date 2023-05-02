@@ -23,8 +23,6 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
             
         $inputfields = parent::getInputfields();
 
-        // $inputfields = new InputfieldWrapper();
-
         // default pw language name to pass as starting language
         $f = $this->modules->get('InputfieldText');
         $f->name = 'default_name';
@@ -131,6 +129,131 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         if(isset($data['select_classes'])) $f->value = $data['select_classes'];        
         $f->columnWidth = 100;
         $inputfields->add($f);          
+
+        // -------------------------------------------------------------------------------
+        // Inputfield wrapper for override settings
+        $fieldSet = wire('modules')->get('InputfieldFieldset');
+        $fieldSet->label = 'Template overrides';
+        $fieldSet->icon = "strikethrough";
+        $fieldSet->set("themeColor", "primary");
+        $fieldSet->collapsed = Inputfield::collapsedYes;        
+
+        // Check for overrides
+        $f = $this->modules->get('InputfieldCheckbox'); 
+        $f->name = 'overrides'; 
+        $f->icon = 'check'; 
+        $f->label = 'Enable template override';
+        $f->label2 = 'Yes';
+        (isset($data['overrides'])) ? $f->checked($data['overrides']) : $f->checked(0);
+        $f->columnWidth = 100;
+        $f->description = 'Enable override for specific templates';
+        $fieldSet->add($f);
+        $inputfields->add($fieldSet);
+
+        // -----------------------------------------------
+        // MULTIPLE TPLS OVERRIDE
+        // -----------------------------------------------          
+        $f = $this->modules->get('InputfieldAsmSelect');
+        $f->name = 'tpls';
+        $f->icon = 'cubes'; 
+        $f->label = 'Page templates for specific translations';
+        $f->description = 'Select which templates will be overrided';
+            $asmOptions = [];
+            // template.flags!=8  == template!=admin 
+            $limitedPages = wire('pages')->find('template!=admin, status!=unpublished, status!=hidden, has_parent!=2, include=all, sort=template.name');
+            foreach ($limitedPages as $lP){
+                $asmOptions[$lP->template->id] = $lP->template->name;
+            }
+        $f->options = $asmOptions;
+        $f->columnWidth = 50;
+        $f->showIf = 'overrides=1';
+        $fieldSet->add($f);
+        $inputfields->add($fieldSet);
+
+        // custom AsmSelect for available languages
+        $f = $this->modules->get('InputfieldAsmSelect');
+        $f->name = 'multiple_override';    
+        $f->icon = 'language';
+        $f->columnWidth = 50;
+        $f->label = 'Languages to display into select options for Overrided temlpates';
+        $f->description = 'Select one or more languages to show in drop-down select options list';
+        $f->notes = 'If blank, all available languages are populated as select options';
+        $f->showIf = 'overrides=1';
+        foreach ($availableLanguages as $code => $title){
+            $f->addOption($code,$title);
+        }       
+        if(isset($data['multiple_override'])) $f->value = $data['multiple_override'];
+        $fieldSet->add($f);
+        $inputfields->add($fieldSet);
+
+
+        // -----------------------------------------------
+        // SINGLE TPL OVERRIDE
+        // -----------------------------------------------          
+        $f = $this->modules->get('InputfieldSelect');
+        $f->name = 'tpl';
+        $f->icon = 'cube'; 
+        $f->label = 'Single template for specific translations';
+        $f->description = 'Select which template will be overrided';
+            $asmOptions = [];
+            // template.flags!=8  == template!=admin 
+            $limitedPages = wire('pages')->find('template!=admin, status!=unpublished, status!=hidden, has_parent!=2, include=all, sort=template.name');
+            foreach ($limitedPages as $lP){
+                $asmOptions[$lP->template->id] = $lP->template->name;
+            }
+        $f->options = $asmOptions;
+        $f->columnWidth = 50;
+        $f->showIf = 'overrides=1';
+        $fieldSet->add($f);
+        $inputfields->add($fieldSet);
+
+        // custom AsmSelect for available languages
+        $f = $this->modules->get('InputfieldAsmSelect');
+        $f->name = 'single_override';    
+        $f->icon = 'language';
+        $f->columnWidth = 50;
+        $f->label = 'Languages to display into select options for a SINGLE temlpate';
+        $f->description = 'Select one or more languages to show in drop-down select options list';
+        $f->notes = 'If blank, all available languages are populated as select options';
+        $f->showIf = 'overrides=1';
+        foreach ($availableLanguages as $code => $title){
+            $f->addOption($code,$title);
+        }       
+        if(isset($data['single_override'])) $f->value = $data['single_override'];
+        $fieldSet->add($f);
+        $inputfields->add($fieldSet);
+
+
+        // -----------------------------------------------
+        // PAGES OVERRIDE
+        // -----------------------------------------------          
+        $f = $this->modules->get('InputfieldText');
+        $f->name = 'page_ids';
+        $f->icon = 'file-o'; 
+        $f->label = 'Page IDs for specific translations';
+        $f->description = 'List the IDs of the pages to override';
+        $f->options = $asmOptions;
+        $f->columnWidth = 50;
+        $f->showIf = 'overrides=1';
+        if(isset($data['page_ids'])) $f->value = $data['page_ids'];
+        $fieldSet->add($f);
+        $inputfields->add($fieldSet);
+
+        // custom AsmSelect for available languages
+        $f = $this->modules->get('InputfieldAsmSelect');
+        $f->name = 'pages_override';    
+        $f->icon = 'language';
+        $f->columnWidth = 50;
+        $f->label = 'Languages to display into select options for page IDs';
+        $f->description = 'Select one or more languages to show in drop-down select options list';
+        $f->notes = 'If blank, all available languages are populated as select options';
+        $f->showIf = 'overrides=1';
+        foreach ($availableLanguages as $code => $title){
+            $f->addOption($code,$title);
+        }       
+        if(isset($data['pages_override'])) $f->value = $data['pages_override'];
+        $fieldSet->add($f);
+        $inputfields->add($fieldSet);
 
 
         return $inputfields;

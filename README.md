@@ -3,11 +3,17 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 ## Cybermano fork
 
-### Changelogs
+### Changeleogs
+
+[V0.1.0] - MILESTONE - RELEASE CANDIDATE - ModuleConfig override template and pages
+Added options to override languages by single templates and page ids (single, multiple and ranges)
+
+[V0.0.9] - ModuleConfig override templates
+Added options to override languages by templates
 
 [V0.0.8] - ModuleConfig separated from module
 Created a ```MarkupGoogleTranslateConfig.php``` to gather config data separated from the module itself (much more readble) 
-Converted availableLanguages() method from private to public to be used in config module.
+Converted ```availableLanguages()``` method from private to public to be used in config module.
 
 [V0.0.7] - Language code passed to Google interface
 Passed ```$languageIsoCode```to the url chunk ```hl=XX``` instead of ```hl=en```to match user required language
@@ -61,6 +67,3 @@ Now can pass only custom languages, to shorten dropdown menu for language option
 
  ```<?php $languages = ["Deutsch" => "de","English" => "en","Italiano" => "it"]; ?> ```
  ```<?php echo $translate->buildGoogleTranslateUrl($languages);?>```
-
-### Roadmap
-- Flag icons beside nationality labels (evaluating best approach to implement: maybe png by cdn?)

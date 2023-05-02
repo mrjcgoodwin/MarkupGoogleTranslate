@@ -7,7 +7,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         'title' => 'Google Page Translate',
         'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
         'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting www.newmc.it',
-        'version' => 0.8,
+        'version' => 10,
     ];
     }
 
@@ -193,6 +193,52 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         // use defaults or custom argument passed
         // if no languages selected, show all
         empty($this->custom_languages) ? $custom_languages = $this->availableLanguages() : $custom_languages = $this->custom_languages;
+
+        // Module override
+        if($this->overrides == 1){
+            // TEMPLATES
+            if (!empty($this->multiple_override)){
+                if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->multiple_override;
+            } else {
+                if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->availableLanguages();
+            }
+
+            if (!empty($this->single_override)){
+                if (wire('page')->template->id == $this->tpl) $custom_languages = $this->single_override;
+            } else {
+                if (wire('page')->template->id == $this->tpl) $custom_languages = $this->availableLanguages();
+            }
+
+            // PAGES
+            // Single Page ids
+            if (strpos($this->page_ids, '|') !== false) $ids = explode('|',$this->page_ids);
+
+            // Range of ids
+            if (strpos($this->page_ids, '-') !== false){
+                $boundaries = explode('-',$this->page_ids);
+                if (isset($boundaries[0]) && ($boundaries[0] != '') && isset($boundaries[1]) && ($boundaries[1] != '')){
+                    $ids = range($boundaries[0],$boundaries[1]);
+                } else {
+                    $ids = [];
+                }
+            }
+
+            if (!isset($ids) && ($this->page_ids != '')){
+                $ids = [$this->page_ids];
+            }
+
+            // Get override languages by tpls or page ids
+            if (isset($ids)){
+                if (!empty($this->pages_override)){
+                    if (in_array(wire('page')->id,$ids)) $custom_languages = $this->pages_override;
+                } else {
+                    if (in_array(wire('page')->id,$ids)) $custom_languages = $this->availableLanguages();
+                }
+            }
+
+        }
+
+        // page code override
         if (!empty($specific)) $custom_languages = $specific;
         // build select options
         foreach ($custom_languages as $code) {
