@@ -5,21 +5,22 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 ### Changeleogs
 
-[V0.1.0] - MILESTONE - RELEASE CANDIDATE - ModuleConfig override template and pages
+[V0.1.0] - ModuleConfig override template and pages.
+#### MILESTONE - RELEASE CANDIDATE
 Added options to override languages by single templates and page ids (single, multiple and ranges)
 
-[V0.0.9] - ModuleConfig override templates
+[V0.0.9] - ModuleConfig override templates.
 Added options to override languages by templates
 
-[V0.0.8] - ModuleConfig separated from module
-Created a ```MarkupGoogleTranslateConfig.php``` to gather config data separated from the module itself (much more readble) 
+[V0.0.8] - ModuleConfig separated from module.
+Created a ```MarkupGoogleTranslateConfig.php``` to gather config data separated from the module itself (much more readble).
 Converted ```availableLanguages()``` method from private to public to be used in config module.
 
-[V0.0.7] - Language code passed to Google interface
-Passed ```$languageIsoCode```to the url chunk ```hl=XX``` instead of ```hl=en```to match user required language
+[V0.0.7] - Language code passed to Google interface.
+Passed ```$languageIsoCode```to the url chunk ```hl=XX``` instead of ```hl=en```to match user required language.
 Restored ```$scheme``` (https/http) in the url previously removed (ad originally not used in the forked repo)
 
-[V0.0.6] - Restored only https scheme
+[V0.0.6] - Restored only https scheme.
 It seems that Google accepts only SSL certificates, expecially on mobile...
 
 [V0.0.5] - Styling and other stuffs
