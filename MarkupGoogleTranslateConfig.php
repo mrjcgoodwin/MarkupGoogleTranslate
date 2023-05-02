@@ -232,6 +232,10 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         $f->icon = 'file-o'; 
         $f->label = 'Page IDs for specific translations';
         $f->description = 'List the IDs of the pages to override';
+        $f->notes = 'Single id or list separated by pipe (\'|\') or ranges of ids separated by hyphen (\'-\'), eg.:
+        ```1030``` means page id 1030
+        ```1030|2025``` means page id 1030 and page id 2025
+        ```1030-1035``` means page id 1030, 1031, 1032, 1033, 1034 and 1035';
         $f->options = $asmOptions;
         $f->columnWidth = 50;
         $f->showIf = 'overrides=1';
