@@ -385,11 +385,11 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         "ug"    => ["name" => "Uyghur",                 "native" => ""],   
         "uz"    => ["name" => "Uzbek",                  "native" => ""],   
         "vi"    => ["name" => "Vietnamese",             "native" => ""],   
-        "cy"    => ["name" => "Welsh",                  "native" => ""],   
-        "xh"    => ["name" => "Xhosa",                  "native" => ""],   
-        "yi"    => ["name" => "Yiddish",                "native" => ""],   
-        "yo"    => ["name" => "Yoruba",                 "native" => ""],   
-        "zu"    => ["name" => "Zulu",                   "native" => ""],   
+        "cy"    => ["name" => "Welsh",                  "native" => "Cymraeg"],   
+        "xh"    => ["name" => "Xhosa",                  "native" => "isXhosa"],   
+        "yi"    => ["name" => "Yiddish",                "native" => "אידיש"],   
+        "yo"    => ["name" => "Yoruba",                 "native" => "èdè Yorùbá"],   
+        "zu"    => ["name" => "Zulu",                   "native" => "isiZulu"],   
         );
         }
 
