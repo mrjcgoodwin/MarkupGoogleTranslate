@@ -268,8 +268,6 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         return $out;
     }
 
-
-
     /**
      * 
      *  WIP - NATIVE NAMES for better UX
@@ -391,8 +389,6 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         "yo"    => ["name" => "Yoruba",                 "native" => "èdè Yorùbá"],   
         "zu"    => ["name" => "Zulu",                   "native" => "IsiZulu"],   
         );
-        }
-
-
+    }
 
 }
