@@ -3,7 +3,7 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 ## Cybermano fork
 
-### Changeleogs
+### Changelogs
 
 [V0.1.0] - ModuleConfig override template and pages.
 #### MILESTONE - RELEASE CANDIDATE
