@@ -6,8 +6,9 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 ### Roadmap
 
 
-Native names 4 better UX
+Module option to add the native language names in the select options drop-down list to enhance UX
 
+Starting native name source
 https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
 
 ---
