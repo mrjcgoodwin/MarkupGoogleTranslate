@@ -3,7 +3,12 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 ## Cybermano fork
 
-### Changelogs
+### Roadmap
+
+Native names 4 better UX
+https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
+
+### Changeleogs
 
 [V0.1.0] - ModuleConfig override template and pages.
 #### MILESTONE - RELEASE CANDIDATE
@@ -12,8 +17,8 @@ Added options to override languages by single templates and page ids (single, mu
 ![screenshot](https://github.com/cybermano/MarkupGoogleTranslate/blob/master/ModuleGooglePageTranslate_newmc.png?raw=true)
 
 #### Issue open
-
 clearUrl() method must be checked
+
 ---
 
 [V0.0.9] - ModuleConfig override templates.
