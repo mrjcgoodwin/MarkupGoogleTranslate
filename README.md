@@ -5,10 +5,14 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 ### Roadmap
 
+
 Native names 4 better UX
+
 https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
 
-### Changeleogs
+---
+
+### Changelogs
 
 [V0.1.0] - ModuleConfig override template and pages.
 #### MILESTONE - RELEASE CANDIDATE
