@@ -381,7 +381,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         "sl"    => ["name" => "Slovenian",              "native" => "Slovenski jezik"],   
         "so"    => ["name" => "Somali",                 "native" => "Af Soomaali"],   
         "es"    => ["name" => "Spanish",                "native" => "Español"],   
-        "su"    => ["name" => "Sundanese",              "native" => "ᮘᮞ ᮞᮥᮔ᮪ᮓ"],   
+        "su"    => ["name" => "Sundanese",              "native" => "Basa Sunda"],   
         "sw"    => ["name" => "Swahili",                "native" => "Kiswahili"],   
         "sv"    => ["name" => "Swedish",                "native" => "Svenska"],   
         "tl"    => ["name" => "Tagalog (Filipino)",     "native" => "Wikang Tagalog"],   
