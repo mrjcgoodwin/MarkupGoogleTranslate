@@ -57,7 +57,8 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         $f->addOption(0,'Only ISO codes (two letters, uppercase)'); 
         $f->addOption(1,'Only English names'); 
         $f->addOption(2,'Only Native names'); 
-        $f->addOption(3,'English and Native names (Eg. "Italian - Italiano")'); 
+        $f->addOption(3,'English and Native names (eg. "Italian - Italiano")'); 
+        $f->addOption(4,'English in admin back-end, Native in front-end'); 
         $f->attr('value', 0); 
         $f->notes = 'Saving this setting, will also reflect the preview in the language selects'; 
         if(isset($data['native'])) $f->value = $data['native'];        
@@ -80,9 +81,10 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         foreach ($availableLanguages as $code => $names){    
 
             if($this->native == 0) $label = $code;
-            if($this->native == 1) $label = $names['name'];
+            if(($this->native == 1)||($this->native == 4)) $label = $names['name'];
             if($this->native == 2) $label = $names['native'];
             if($this->native == 3) $label = $names['name'] . ' - ' . $names['native'];
+            
 
             $f->addOption($code,$label);
         }       
@@ -205,7 +207,7 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         foreach ($availableLanguages as $code => $names){
 
             if($this->native == 0) $label = $code;
-            if($this->native == 1) $label = $names['name'];
+            if(($this->native == 1)||($this->native == 4)) $label = $names['name'];
             if($this->native == 2) $label = $names['native'];
             if($this->native == 3) $label = $names['name'] . ' - ' . $names['native'];
 
@@ -248,7 +250,7 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         foreach ($availableLanguages as $code => $names){
 
             if($this->native == 0) $label = $code;
-            if($this->native == 1) $label = $names['name'];
+            if(($this->native == 1)||($this->native == 4)) $label = $names['name'];
             if($this->native == 2) $label = $names['native'];
             if($this->native == 3) $label = $names['name'] . ' - ' . $names['native'];
 
@@ -290,7 +292,7 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         foreach ($availableLanguages as $code => $names){
 
             if($this->native == 0) $label = $code;
-            if($this->native == 1) $label = $names['name'];
+            if(($this->native == 1)||($this->native == 4)) $label = $names['name'];
             if($this->native == 2) $label = $names['native'];
             if($this->native == 3) $label = $names['name'] . ' - ' . $names['native'];
 
