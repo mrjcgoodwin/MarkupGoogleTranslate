@@ -19,7 +19,8 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
 
     public function getInputfields() {
         
-        $availableLanguages = array_flip(wire('modules')->get('MarkupGoogleTranslate')->availableLanguages());
+        // $availableLanguages = array_flip(wire('modules')->get('MarkupGoogleTranslate')->availableLanguages());
+        $availableLanguages = wire('modules')->get('MarkupGoogleTranslate')->languageCodeNativeNames();
             
         $inputfields = parent::getInputfields();
 
@@ -27,7 +28,7 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         $f = $this->modules->get('InputfieldText');
         $f->name = 'default_name';
         $f->icon = 'flag-checkered';
-        $f->columnWidth = 25;
+        $f->columnWidth = 50;
         $f->minlength = $f->maxlength = 2;
         $f->size = 1;
         $f->label = 'Name code as starting language';
@@ -40,7 +41,7 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         $f = $this->modules->get('InputfieldText');
         $f->name = 'first_option';
         $f->icon = 'font';
-        $f->columnWidth = 25;
+        $f->columnWidth = 50;
         $f->label = 'First option label for the html select tag';
         $f->description = 'Avoids specific multi language translation for this label
         
@@ -48,6 +49,23 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         $f->notes = 'If blank, will be populated as "Translate page"';
         $f->value = (isset($data['first_option'])) ? $data['first_option'] : '';
         $inputfields->add($f);
+
+        // NAtive names
+        $f = $this->modules->get('InputfieldRadios'); 
+        $f->name = 'native'; 
+        $f->icon = 'book'; 
+        $f->label = 'Use ISO Code/English/Native names'; 
+        $f->addOption(0,'Only ISO codes (two letters)'); 
+        $f->addOption(1,'Only English names'); 
+        $f->addOption(2,'Only Native names'); 
+        $f->addOption(3,'English and Native names'); 
+        $f->attr('value', 0); 
+        $f->notes = 'Saving this setting, will also reflect the preview in the language selects'; 
+        if(isset($data['native'])) $f->value = $data['native'];        
+        $f->optionColumns = 0; 
+        $f->columnWidth = 50; 
+        $inputfields->add($f);  
+
 
         // custom AsmSelect for available languages
         $f = $this->modules->get('InputfieldAsmSelect');
@@ -60,8 +78,14 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         
         Into template page, it could be overrided by passing an array of ISO codes eg.:
         ```echo wire("modules")->get("MarkupGoogleTranslate")->displayTranslateWidget(["es","fr"]);```';
-        foreach ($availableLanguages as $code => $title){
-            $f->addOption($code,$title);
+        foreach ($availableLanguages as $code => $names){
+
+            if($this->native == 0) $label = $code;
+            if($this->native == 1) $label = $names['name'];
+            if($this->native == 2) $label = $names['native'];
+            if($this->native == 3) $label = $names['name'] . ' - ' . $names['native'];
+
+            $f->addOption($code,$label);
         }       
         if(isset($data['custom_languages'])) $f->value = $data['custom_languages'];
         $inputfields->add($f);
@@ -179,8 +203,14 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         $f->description = 'Select one or more languages to show in drop-down select options list';
         $f->notes = 'If blank, all available languages are populated as select options';
         $f->showIf = 'overrides=1';
-        foreach ($availableLanguages as $code => $title){
-            $f->addOption($code,$title);
+        foreach ($availableLanguages as $code => $names){
+
+            if($this->native == 0) $label = $code;
+            if($this->native == 1) $label = $names['name'];
+            if($this->native == 2) $label = $names['native'];
+            if($this->native == 3) $label = $names['name'] . ' - ' . $names['native'];
+
+            $f->addOption($code,$label);
         }       
         if(isset($data['multiple_override'])) $f->value = $data['multiple_override'];
         $fieldSet->add($f);
@@ -216,8 +246,14 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         $f->description = 'Select one or more languages to show in drop-down select options list';
         $f->notes = 'If blank, all available languages are populated as select options';
         $f->showIf = 'overrides=1';
-        foreach ($availableLanguages as $code => $title){
-            $f->addOption($code,$title);
+        foreach ($availableLanguages as $code => $names){
+
+            if($this->native == 0) $label = $code;
+            if($this->native == 1) $label = $names['name'];
+            if($this->native == 2) $label = $names['native'];
+            if($this->native == 3) $label = $names['name'] . ' - ' . $names['native'];
+
+            $f->addOption($code,$label);
         }       
         if(isset($data['single_override'])) $f->value = $data['single_override'];
         $fieldSet->add($f);
@@ -252,8 +288,14 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         $f->description = 'Select one or more languages to show in drop-down select options list';
         $f->notes = 'If blank, all available languages are populated as select options';
         $f->showIf = 'overrides=1';
-        foreach ($availableLanguages as $code => $title){
-            $f->addOption($code,$title);
+        foreach ($availableLanguages as $code => $names){
+
+            if($this->native == 0) $label = $code;
+            if($this->native == 1) $label = $names['name'];
+            if($this->native == 2) $label = $names['native'];
+            if($this->native == 3) $label = $names['name'] . ' - ' . $names['native'];
+
+            $f->addOption($code,$label);
         }       
         if(isset($data['pages_override'])) $f->value = $data['pages_override'];
         $fieldSet->add($f);

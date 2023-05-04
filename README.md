@@ -3,17 +3,12 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 ## Cybermano fork
 
-### Roadmap
-
-
-Module option to add the native language names in the select options drop-down list to enhance UX
-
-Starting native name source
-https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes
-
----
-
 ### Changelogs
+
+[V0.1.1] - Native names added.
+
+Added new method ```languageCodeNativeNames()``` and replaceed ```availableLanguages()``` and ```available_flipped()``` ones to extract English language names and/or Native language names (list from https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes)
+
 
 [V0.1.0] - ModuleConfig override template and pages.
 #### MILESTONE - RELEASE CANDIDATE

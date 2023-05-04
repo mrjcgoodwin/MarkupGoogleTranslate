@@ -7,7 +7,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         'title' => 'Google Page Translate',
         'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
         'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting www.newmc.it',
-        'version' => 10,
+        'version' => 11,
     ];
     }
 
@@ -192,7 +192,8 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         $options = '';
         // use defaults or custom argument passed
         // if no languages selected, show all
-        empty($this->custom_languages) ? $custom_languages = $this->availableLanguages() : $custom_languages = $this->custom_languages;
+        // empty($this->custom_languages) ? $custom_languages = $this->availableLanguages() : $custom_languages = $this->custom_languages;
+        empty($this->custom_languages) ? $custom_languages = $this->languageCodeNativeNames() : $custom_languages = $this->custom_languages;
 
         // Module override
         if($this->overrides == 1){
@@ -200,13 +201,15 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
             if (!empty($this->multiple_override)){
                 if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->multiple_override;
             } else {
-                if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->availableLanguages();
+                // if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->availableLanguages();
+                if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->languageCodeNativeNames();
             }
 
             if (!empty($this->single_override)){
                 if (wire('page')->template->id == $this->tpl) $custom_languages = $this->single_override;
             } else {
-                if (wire('page')->template->id == $this->tpl) $custom_languages = $this->availableLanguages();
+                // if (wire('page')->template->id == $this->tpl) $custom_languages = $this->availableLanguages();
+                if (wire('page')->template->id == $this->tpl) $custom_languages = $this->languageCodeNativeNames();
             }
 
             // PAGES
@@ -232,7 +235,8 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
                 if (!empty($this->pages_override)){
                     if (in_array(wire('page')->id,$ids)) $custom_languages = $this->pages_override;
                 } else {
-                    if (in_array(wire('page')->id,$ids)) $custom_languages = $this->availableLanguages();
+                    // if (in_array(wire('page')->id,$ids)) $custom_languages = $this->availableLanguages();
+                    if (in_array(wire('page')->id,$ids)) $custom_languages = $this->languageCodeNativeNames();
                 }
             }
 
@@ -241,10 +245,20 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         // page code override
         if (!empty($specific)) $custom_languages = $specific;
         // build select options
+
         foreach ($custom_languages as $code) {
             $url = $this->buildGoogleTranslateUrl($code);
             // workaround with flipped array
-            $options .= '<option value="'.$url.'">'.$this->available_flipped($code).'</option>';
+            // $options .= '<option value="'.$url.'">'.$this->available_flipped($code).'</option>';
+
+            $arr = $this->languageCodeNativeNames();
+
+            if($this->native == 0) $label = strtoupper($code);
+            if($this->native == 1) $label = $arr[$code]['name'];
+            if($this->native == 2) $label = $arr[$code]['native'];
+            if($this->native == 3) $label = $arr[$code]['name'] . ' - ' . $arr[$code]['native'];
+
+            $options .= '<option value="'.$url.'">'.$label.'</option>';
         }
 
         ($this->icon != 0) ? $icon = '<img class="" src="https://fonts.gstatic.com/s/i/productlogos/translate/v6/'.$this->icon_size.'px.svg" alt="Google Translate">' : $icon = '';
