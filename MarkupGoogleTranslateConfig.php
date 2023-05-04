@@ -19,7 +19,6 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
 
     public function getInputfields() {
         
-        // $availableLanguages = array_flip(wire('modules')->get('MarkupGoogleTranslate')->availableLanguages());
         $availableLanguages = wire('modules')->get('MarkupGoogleTranslate')->languageCodeNativeNames();
             
         $inputfields = parent::getInputfields();
@@ -54,11 +53,11 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         $f = $this->modules->get('InputfieldRadios'); 
         $f->name = 'native'; 
         $f->icon = 'book'; 
-        $f->label = 'Use ISO Code/English/Native names'; 
-        $f->addOption(0,'Only ISO codes (two letters)'); 
+        $f->label = 'Show ISO Code/English/Native names for select option labels'; 
+        $f->addOption(0,'Only ISO codes (two letters, uppercase)'); 
         $f->addOption(1,'Only English names'); 
         $f->addOption(2,'Only Native names'); 
-        $f->addOption(3,'English and Native names'); 
+        $f->addOption(3,'English and Native names (Eg. "Italian - Italiano")'); 
         $f->attr('value', 0); 
         $f->notes = 'Saving this setting, will also reflect the preview in the language selects'; 
         if(isset($data['native'])) $f->value = $data['native'];        
@@ -78,7 +77,7 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         
         Into template page, it could be overrided by passing an array of ISO codes eg.:
         ```echo wire("modules")->get("MarkupGoogleTranslate")->displayTranslateWidget(["es","fr"]);```';
-        foreach ($availableLanguages as $code => $names){
+        foreach ($availableLanguages as $code => $names){    
 
             if($this->native == 0) $label = $code;
             if($this->native == 1) $label = $names['name'];

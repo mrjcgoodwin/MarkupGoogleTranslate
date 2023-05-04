@@ -7,13 +7,12 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         'title' => 'Google Page Translate',
         'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
         'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting www.newmc.it',
-        'version' => 11,
+        'version' => 12,
     ];
     }
 
     //Utility to clean the URL to match the format Google Likes
     private function cleanUrl($url) {
-        // $cleanUrl = str_replace('-','--',$url);
         $cleanUrl = str_replace('.','-',$url);
         return $cleanUrl;
     }
@@ -55,134 +54,6 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 
     }
 
-    /*
-    Available language codes for translation based
-    on https://cloud.google.com/translate/docs/languages
-    */
-    public function availableLanguages() {
-
-        return array(
-            "Afrikaans" => "af",
-            "Albanian" => "sq",
-            "Amharic" => "am",
-            "Arabic" => "ar",
-            "Armenian" => "hy",
-            "Azerbaijani" => "az",
-            "Basque" => "eu",
-            "Belarusian" => "be",
-            "Bengali" => "bn",
-            "Bosnian" => "bs",
-            "Bulgarian" => "bg",
-            "Catalan" => "ca",
-            "Cebuano" => "ceb",
-            "Chinese (Simplified)" => "zh-CN",
-            "Chinese (Traditional)" => "zh-TW",
-            "Corsican" => "co",
-            "Croatian" => "hr",
-            "Czech" => "cs",
-            "Danish" => "da",
-            "Dutch" => "nl",
-            "English" => "en",
-            "Esperanto" => "eo",
-            "Estonian" => "et",
-            "Finnish" => "fi",
-            "French" => "fr",
-            "Frisian" => "fy",
-            "Galician" => "gl",
-            "Georgian" => "ka",
-            "German" => "de",
-            "Greek" => "el",
-            "Gujarati" => "gu",
-            "Haitian Creole" => "ht",
-            "Hausa" => "ha",
-            "Hawaiian" => "haw",
-            "Hebrew" => "he",
-            "Hindi" => "hi",
-            "Hmong" => "hmn",
-            "Hungarian" => "hu",
-            "Icelandic" => "is",
-            "Igbo" => "ig",
-            "Indonesian" => "id",
-            "Irish" => "ga",
-            "Italian" => "it",
-            "Japanese" => "ja",
-            "Javanese" => "jv",
-            "Kannada" => "kn",
-            "Kazakh" => "kk",
-            "Khmer" => "km",
-            "Kinyarwanda" => "rw",
-            "Korean" => "ko",
-            "Kurdish" => "ku",
-            "Kyrgyz" => "ky",
-            "Lao" => "lo",
-            "Latin" => "la",
-            "Latvian" => "lv",
-            "Lithuanian" => "lt",
-            "Luxembourgish" => "lb",
-            "Macedonian" => "mk",
-            "Malagasy" => "mg",
-            "Malay" => "ms",
-            "Malayalam" => "ml",
-            "Maltese" => "mt",
-            "Maori" => "mi",
-            "Marathi" => "mr",
-            "Mongolian" => "mn",
-            "Myanmar (Burmese)" => "my",
-            "Nepali" => "ne",
-            "Norwegian" => "no",
-            "Nyanja (Chichewa)" => "ny",
-            "Odia (Oriya)" => "or",
-            "Pashto" => "ps",
-            "Persian" => "fa",
-            "Polish" => "pl",
-            "Portuguese" => "pt",
-            "Punjabi" => "pa",
-            "Romanian" => "ro",
-            "Russian" => "ru",
-            "Samoan" => "sm",
-            "Scots Gaelic" => "gd",
-            "Serbian" => "sr",
-            "Sesotho" => "st",
-            "Shona" => "sn",
-            "Sindhi" => "sd",
-            "Sinhala (Sinhalese)" => "si",
-            "Slovak" => "sk",
-            "Slovenian" => "sl",
-            "Somali" => "so",
-            "Spanish" => "es",
-            "Sundanese" => "su",
-            "Swahili" => "sw",
-            "Swedish" => "sv",
-            "Tagalog (Filipino)" => "tl",
-            "Tajik" => "tg",
-            "Tamil" => "ta",
-            "Tatar" => "tt",
-            "Telugu" => "te",
-            "Thai" => "th",
-            "Turkish" => "tr",
-            "Turkmen" => "tk",
-            "Ukrainian" => "uk",
-            "Urdu" => "ur",
-            "Uyghur" => "ug",
-            "Uzbek" => "uz",
-            "Vietnamese" => "vi",
-            "Welsh" => "cy",
-            "Xhosa" => "xh",
-            "Yiddish" => "yi",
-            "Yoruba" => "yo",
-            "Zulu" => "zu",
-        );
-    }
-
-    /*
-    Return Available language flipped as code=>title
-    For AsmSelect usage
-    */
-    private function available_flipped($k) {
-        $arr = array_flip($this->availableLanguages());
-        return $arr[$k];
-    }
-
     /**
      * @param array $specific = set a two letters ISO code for single and specific language (useful in case of specific translation for single pages)
      */
@@ -192,7 +63,6 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         $options = '';
         // use defaults or custom argument passed
         // if no languages selected, show all
-        // empty($this->custom_languages) ? $custom_languages = $this->availableLanguages() : $custom_languages = $this->custom_languages;
         empty($this->custom_languages) ? $custom_languages = $this->languageCodeNativeNames() : $custom_languages = $this->custom_languages;
 
         // Module override
@@ -201,14 +71,12 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
             if (!empty($this->multiple_override)){
                 if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->multiple_override;
             } else {
-                // if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->availableLanguages();
                 if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->languageCodeNativeNames();
             }
 
             if (!empty($this->single_override)){
                 if (wire('page')->template->id == $this->tpl) $custom_languages = $this->single_override;
             } else {
-                // if (wire('page')->template->id == $this->tpl) $custom_languages = $this->availableLanguages();
                 if (wire('page')->template->id == $this->tpl) $custom_languages = $this->languageCodeNativeNames();
             }
 
@@ -235,7 +103,6 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
                 if (!empty($this->pages_override)){
                     if (in_array(wire('page')->id,$ids)) $custom_languages = $this->pages_override;
                 } else {
-                    // if (in_array(wire('page')->id,$ids)) $custom_languages = $this->availableLanguages();
                     if (in_array(wire('page')->id,$ids)) $custom_languages = $this->languageCodeNativeNames();
                 }
             }
@@ -248,16 +115,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 
         foreach ($custom_languages as $code) {
             $url = $this->buildGoogleTranslateUrl($code);
-            // workaround with flipped array
-            // $options .= '<option value="'.$url.'">'.$this->available_flipped($code).'</option>';
-
-            $arr = $this->languageCodeNativeNames();
-
-            if($this->native == 0) $label = strtoupper($code);
-            if($this->native == 1) $label = $arr[$code]['name'];
-            if($this->native == 2) $label = $arr[$code]['native'];
-            if($this->native == 3) $label = $arr[$code]['name'] . ' - ' . $arr[$code]['native'];
-
+            $label = $this->switchLangLabel($code);
             $options .= '<option value="'.$url.'">'.$label.'</option>';
         }
 
@@ -282,15 +140,38 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         return $out;
     }
 
+
     /**
-     * 
-     *  WIP - NATIVE NAMES for better UX
-     * 
-     *  $arr = $this->languageCodeNativeNames();
-     *  var_dump($arr['ar']['name'] . ' - ' . $arr['ar']['native']);
-     * 
-     * 
+     * Return Option label as module setting
      */
+    public function switchLangLabel(string $code){
+        $arr = $this->languageCodeNativeNames();
+        switch($this->native){
+            case 0:
+                $label = strtoupper($code);
+                break;
+            case 1:
+                $label = $arr[$code]['name'];
+                break;
+            case 2:
+                $label = $arr[$code]['native'];
+                break;
+            case 3:
+                $label = $arr[$code]['name'] . ' - ' . $arr[$code]['native'];
+                break;
+        }
+
+        return $label;
+
+    }
+
+    /*
+    Available language codes for translation based
+    on https://cloud.google.com/translate/docs/languages
+
+    Return array of language with "name" (English) and "native" indexes
+
+    */
     public function languageCodeNativeNames(){ 
         return array(
         "af"    => ["name" => "Afrikaans",              "native" => "Afrikaans"],
