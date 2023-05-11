@@ -23,6 +23,17 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
             
         $inputfields = parent::getInputfields();
 
+        // DIV wrapper
+        $f = $this->modules->get('InputfieldCheckbox'); 
+        $f->name = 'enable'; 
+        $f->icon = 'toggle-on';
+        $f->label = 'Enable module?';
+        $f->label2 = 'Yes';
+        $f->set("themeColor", "highlight");
+        (isset($data['enable'])) ? $f->checked($data['enable']) : $f->checked(0);
+        $f->columnWidth = 100;
+        $inputfields->add($f);         
+
         // default pw language name to pass as starting language
         $f = $this->modules->get('InputfieldText');
         $f->name = 'default_name';
