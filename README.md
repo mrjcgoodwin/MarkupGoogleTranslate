@@ -5,6 +5,8 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 ### Changelogs
 
+[V0.1.4] - Enable/disable Module and "surgical" override for specific page ids.
+
 [V0.1.1] - Native names added.
 
 Added new method ```languageCodeNativeNames()``` and replaceed ```availableLanguages()``` and ```available_flipped()``` ones to extract English language names and/or Native language names (list from https://en.wikipedia.org/wiki/List_of_ISO_639-2_codes)

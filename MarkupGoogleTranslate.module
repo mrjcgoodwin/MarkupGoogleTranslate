@@ -7,7 +7,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         'title' => 'Google Page Translate',
         'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
         'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting www.newmc.it',
-        'version' => 12,
+        'version' => 14,
     ];
     }
 
@@ -70,6 +70,9 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
 
             // Module override
             if($this->overrides == 1){
+
+                $ids = [];
+
                 // TEMPLATES
                 if (!empty($this->multiple_override)){
                     if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->multiple_override;
@@ -92,9 +95,10 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
                     $boundaries = explode('-',$this->page_ids);
                     if (isset($boundaries[0]) && ($boundaries[0] != '') && isset($boundaries[1]) && ($boundaries[1] != '')){
                         $ids = range($boundaries[0],$boundaries[1]);
-                    } else {
-                        $ids = [];
                     }
+                    // else {
+                    //     $ids = [];
+                    // }
                 }
 
                 if (!isset($ids) && ($this->page_ids != '')){
@@ -110,7 +114,46 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
                     }
                 }
 
+                if (trim($this->surgical)){
+    
+                    $pageChunks = explode(PHP_EOL,$this->surgical);
+
+                    $surgical_languages = [];
+                    
+                    foreach($pageChunks as $group){
+
+                        $condition = explode('=',$group);
+    
+                        if (strpos($condition[0], '|') !== false){
+                            $arr = explode('|',$condition[0]);
+                            foreach($arr as $a){
+                                array_push($ids,intval($a));
+                                $surgical_languages[$a] = explode('|',$condition[1]);
+                            }
+                        }
+                        elseif (strpos($condition[0], '-') !== false){
+                            $boundaries = explode('-',$condition[0]);
+                            $arr = range($boundaries[0],$boundaries[1]);
+                            foreach($arr as $a){
+                                array_push($ids,intval($a));
+                                $surgical_languages[$a] = explode('|',$condition[1]);
+                            }
+                        } 
+                        else {
+                            array_push($ids,intval($condition[0]));
+                            $surgical_languages[$condition[0]] = explode('|',$condition[1]);
+                        }         
+
+                        }                
+
+                    if (in_array(wire('page')->id,$ids)) $custom_languages = $surgical_languages[wire('page')->id];
+
+                } // surgical
+
+
             }
+
+            
 
             // page code override
             if (!empty($specific)) $custom_languages = $specific;

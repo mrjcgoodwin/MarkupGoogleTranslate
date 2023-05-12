@@ -23,7 +23,7 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
             
         $inputfields = parent::getInputfields();
 
-        // DIV wrapper
+        // Enable/disable output
         $f = $this->modules->get('InputfieldCheckbox'); 
         $f->name = 'enable'; 
         $f->icon = 'toggle-on';
@@ -169,20 +169,20 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         // -------------------------------------------------------------------------------
         // Inputfield wrapper for override settings
         $fieldSet = wire('modules')->get('InputfieldFieldset');
-        $fieldSet->label = 'Template overrides';
+        $fieldSet->label = 'Overrides';
         $fieldSet->icon = "strikethrough";
         $fieldSet->set("themeColor", "primary");
-        $fieldSet->collapsed = Inputfield::collapsedYes;        
-
+        ($this->overrides == 0) ? $fieldSet->collapsed = Inputfield::collapsedYes : $fieldSet->collapsed = Inputfield::collapsedNo ;
+        
         // Check for overrides
         $f = $this->modules->get('InputfieldCheckbox'); 
         $f->name = 'overrides'; 
         $f->icon = 'check'; 
-        $f->label = 'Enable template override';
+        $f->label = 'Enable override for templates or pages?';
         $f->label2 = 'Yes';
         (isset($data['overrides'])) ? $f->checked($data['overrides']) : $f->checked(0);
         $f->columnWidth = 100;
-        $f->description = 'Enable override for specific templates';
+        $f->description = 'Enable override for specific templates by name or pages by id';
         $fieldSet->add($f);
         $inputfields->add($fieldSet);
 
@@ -284,7 +284,7 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         ```1030``` means page id 1030
         ```1030|2025``` means page id 1030 and page id 2025
         ```1030-1035``` means page id 1030, 1031, 1032, 1033, 1034 and 1035';
-        $f->options = $asmOptions;
+        // $f->options = $asmOptions;
         $f->columnWidth = 50;
         $f->showIf = 'overrides=1';
         if(isset($data['page_ids'])) $f->value = $data['page_ids'];
@@ -312,6 +312,24 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         if(isset($data['pages_override'])) $f->value = $data['pages_override'];
         $fieldSet->add($f);
         $inputfields->add($fieldSet);
+
+
+        // -----------------------------------------------
+        // SURGICAL PAGE OVERRIDES
+        // -----------------------------------------------          
+        $f = $this->modules->get('InputfieldTextarea');
+        $f->name = 'surgical';
+        $f->icon = 'crosshairs'; 
+        $f->label = 'Page IDs for "surgical" override';
+        $f->description = 'List the ```page.id=isocode``` to set specific translation options for that page. Write each condition on single line.';
+        $f->notes = '```1030=it``` means page id 1030 will have Italian in dropdown options list
+        ```1030=it|en```  means page id 1030 will have both Italian and English in dropdown options list
+        ```1030|1031=it|en```  means pages with id 1030 and 1031 will have both Italian and English in dropdown options list
+        ```1033-1034=de|en|fr```  means pages with id between 1033 and 1034 will have German, English and French in dropdown options list';
+        $f->showIf = 'overrides=1';
+        if(isset($data['surgical'])) $f->value = $data['surgical'];
+        $fieldSet->add($f);
+        $inputfields->add($fieldSet);        
 
 
         return $inputfields;
