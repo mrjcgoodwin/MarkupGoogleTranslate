@@ -11,9 +11,6 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
           'custom_languages' => [],
           'icon' => 0,
           'icon_size' => 24,
-          'wrapper' => 0,
-          'div_classes' => '',
-          'select_classes' => '',
         );
       }
 
@@ -48,7 +45,8 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->icon = 'toggle-on';
         $f->label = 'Enable module?';
         $f->label2 = 'Yes';
-        (isset($data['enable'])) ? $f->checked($data['enable']) : $f->checked(0);
+        $f->attr('value', $this->enable ? $this->enable : 0 );
+        $f->attr('checked', $this->enable === 1 ? 'checked' : '' );
         $f->columnWidth = 100;
         $inputfields->add($f);
         
@@ -179,7 +177,8 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->icon = 'code'; 
         $f->label = 'Wrap all into a div';
         $f->label2 = 'Yes';
-        (isset($data['wrapper'])) ? $f->checked($data['wrapper']) : $f->checked(0);
+        $f->attr('value', $this->wrapper ? $this->wrapper : 0 );
+        $f->attr('checked', $this->wrapper === 1 ? 'checked' : '' );
         $f->columnWidth = 50;
         $f->description = 'Wrap both select and icon (if enabled) into a single div';
                 $fsGlobal->add($f);
@@ -225,7 +224,8 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->icon = 'check'; 
         $f->label = 'Enable override for templates or pages?';
         $f->label2 = 'Yes';
-        (isset($data['overrides'])) ? $f->checked($data['overrides']) : $f->checked(0);
+        $f->attr('value', $this->overrides ? $this->overrides : 0 );
+        $f->attr('checked', $this->overrides === 1 ? 'checked' : '' );        
         $f->columnWidth = 100;
         $f->description = 'Enable override for specific templates by name or pages by id';
         $fieldSet->add($f);
@@ -256,7 +256,7 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->name = 'multiple_override';    
         $f->icon = 'language';
         $f->columnWidth = 50;
-        $f->label = 'Languages to display into select options for Overrided temlpates';
+        $f->label = 'Languages to display into select options for Overrided templates';
         $f->description = 'Select one or more languages to show in drop-down select options list';
         $f->notes = 'If blank, all available languages are populated as select options';
         $f->showIf = 'overrides=1';
@@ -299,7 +299,7 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->name = 'single_override';    
         $f->icon = 'language';
         $f->columnWidth = 50;
-        $f->label = 'Languages to display into select options for a SINGLE temlpate';
+        $f->label = 'Languages to display into select options for a SINGLE template';
         $f->description = 'Select one or more languages to show in drop-down select options list';
         $f->notes = 'If blank, all available languages are populated as select options';
         $f->showIf = 'overrides=1';
