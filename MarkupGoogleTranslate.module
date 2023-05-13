@@ -17,6 +17,11 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         return $cleanUrl;
     }
 
+    // Public check if Module is also enabled
+    public function isEnabled(){
+        if ($this->enable == 1) return true;
+    }
+
     public function buildGoogleTranslateUrl($languageIsoCode) {
 
         // User language for Starting language to pass to Google Translate
