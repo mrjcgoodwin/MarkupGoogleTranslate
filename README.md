@@ -6,6 +6,8 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 ### Changelogs
 
 [V0.1.5] - "Surgical" override for specific starting language.
+#### MILESTONE - RELEASE CANDIDATE
+![screenshot](https://github.com/cybermano/MarkupGoogleTranslate/blob/master/ModuleGooglePageTranslate_newmc_V015.png?raw=true)
 
 [V0.1.4] - Enable/disable Module and "surgical" override for specific page ids.
 
@@ -19,10 +21,7 @@ Added new method ```languageCodeNativeNames()``` and replaceed ```availableLangu
 
 
 [V0.1.0] - ModuleConfig override template and pages.
-#### MILESTONE - RELEASE CANDIDATE
 Added options to override languages by single templates and page ids (single, multiple and ranges)
-
-![screenshot](https://github.com/cybermano/MarkupGoogleTranslate/blob/master/ModuleGooglePageTranslate_newmc.png?raw=true)
 
 #### Issue open
 clearUrl() method must be checked
