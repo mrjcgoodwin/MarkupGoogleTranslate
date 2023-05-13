@@ -18,6 +18,28 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
       }
 
     public function getInputfields() {
+
+ 
+        // Text for usage notes
+        $text  = '<div>';
+        $text .= '<h2 style="color:red;">Work in progress</h2>';
+        $text .= '<p>Actually implementing starting language code to override with "surgical" settings.<p>';
+        $text .= '<h3>Module Usage</h3>';
+        $text .= '<p>In your page template, add this code:</p>';
+        $text .= '
+        if (wire("modules")->isInstalled("MarkupGoogleTranslate")){
+            <br/>
+            <span style="margin-left:20px">echo wire("modules")->get("MarkupGoogleTranslate")->displayTranslateWidget();</span> 
+            <br/>
+        }
+        ';
+        $text .= '<h4>Overriding languages in page template</h4>';
+        $text .= '<p>Pass an array of iso code languages.</p>';
+        $text .= '<p>Eg. to override Spanish ("es") and Greek ("el"):</p>';
+        $text .= '<span style="margin-left:20px">echo wire("modules")->get("MarkupGoogleTranslate")->displayTranslateWidget(<pan style="color:red;">["es","el"]</span>);</span>';
+        $text .= '<p>Eg. to override only German ("de"):</p>';
+        $text .= '<span style="margin-left:20px">echo wire("modules")->get("MarkupGoogleTranslate")->displayTranslateWidget(<pan style="color:red;">["de"]</span>);</span>';
+        $text .= '</div>';    
         
         $availableLanguages = wire('modules')->get('MarkupGoogleTranslate')->languageCodeNativeNames();
             
@@ -32,7 +54,19 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         $f->set("themeColor", "highlight");
         (isset($data['enable'])) ? $f->checked($data['enable']) : $f->checked(0);
         $f->columnWidth = 100;
-        $inputfields->add($f);         
+        $inputfields->add($f);          
+        
+        // Usage notes
+        $f = $this->modules->get('InputfieldMarkup'); 
+        $f->name = 'usage'; 
+        $f->icon = 'book';
+        $f->label = 'Usage notes';
+        $f->value = $text;
+        // $f->value = 'Work in progress';
+        $f->set("themeColor", "warning");
+        $f->set("themeOffset", "m");
+        $f->showIf = 'enable=1';
+        $inputfields->add($f);                   
 
         // default pw language name to pass as starting language
         $f = $this->modules->get('InputfieldText');
@@ -321,7 +355,8 @@ class MarkupGoogleTranslateConfig extends ModuleConfig {
         $f->name = 'surgical';
         $f->icon = 'crosshairs'; 
         $f->label = 'Page IDs for "surgical" override';
-        $f->description = 'List the ```page.id=isocode``` to set specific translation options for that page. Write each condition on single line.';
+        $f->description = 'List the ```page.id=isocode``` to set specific translation options for that page. Write each condition on single line.
+        **N.B. This overrides previous settings above.**';
         $f->notes = '```1030=it``` means page id 1030 will have Italian in dropdown options list
         ```1030=it|en```  means page id 1030 will have both Italian and English in dropdown options list
         ```1030|1031=it|en```  means pages with id 1030 and 1031 will have both Italian and English in dropdown options list
