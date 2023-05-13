@@ -384,9 +384,9 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->label = 'Starting "surgical" override';
         $f->description = 'List the ```page.id=isocode``` to set specific **starting language** to pass to Google Translate for that page. Write each condition on single line.
         **N.B. This overrides default starting language settings above.**';
-        $f->notes = '```1030=it``` means page id 1030 will have Italian as starting lamguage
-        ```1030|1031=en```  means pages with id 1030 and 1031 will pass English as starting lamguage
-        ```1033-1034=de```  means pages with id between 1033 and 1034 will pass German as starting lamguage';
+        $f->notes = '```1030=it``` means page id 1030 will have Italian as starting language
+        ```1030|1031=en```  means pages with id 1030 and 1031 will pass English as starting language
+        ```1033-1034=de```  means pages with id between 1033 and 1034 will pass German as starting language';
         $f->showIf = 'overrides=1';
         $f->columnWidth = 50;
         if(isset($data['surgical_starting'])) $f->value = $data['surgical_starting'];
