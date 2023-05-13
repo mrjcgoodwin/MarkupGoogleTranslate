@@ -5,7 +5,13 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 ### Changelogs
 
+[V0.1.5] - "Surgical" override for specific starting language.
+
 [V0.1.4] - Enable/disable Module and "surgical" override for specific page ids.
+
+[V0.1.3] - Minor updates and little fixes
+
+[V0.1.2] - Minor updates and little fixes
 
 [V0.1.1] - Native names added.
 
