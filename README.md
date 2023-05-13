@@ -7,7 +7,9 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 [V0.1.5] - "Surgical" override for specific starting language.
 
-Also solved an issue on checkbox value/checked data thanks to this
+Added public function ```isEnabled()``` to check via API if the module is enabled (useful in conditions for outputting something else in case the module is not enabled, but still installed).
+
+Also solved an issue on checkboxes value/checked data, thanks to this
 [PW thread](https://processwire.com/talk/topic/5995-inputfieldcheckbox-issue/) .
 #### MILESTONE - RELEASE CANDIDATE
 ![screenshot](https://github.com/cybermano/MarkupGoogleTranslate/blob/master/ModuleGooglePageTranslate_newmc_V015.png?raw=true)
