@@ -47,8 +47,24 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->label2 = 'Yes';
         $f->attr('value', $this->enable ? $this->enable : 0 );
         $f->attr('checked', $this->enable === 1 ? 'checked' : '' );
-        $f->columnWidth = 100;
+        $f->columnWidth = 50;
         $inputfields->add($f);
+
+        // Restrict role for test
+        $f = wire('modules')->get('InputfieldAsmSelect');
+        $f->name = 'allowedRoles';
+        $f->icon = 'users';
+        $f->columnWidth = 50;
+        $f->showIf = 'enable=1';
+        $f->label = 'Restrict roles';
+        $f->description = 'Roles enabled to view the language select';
+        $allRoles = wire('roles')->find('sort=id');
+        // $this->warning($allRoles);
+        foreach($allRoles as $id => $oneRole){
+            $f->addOptions([$oneRole->id => $oneRole->name]);
+        }  
+        if(isset($data['allowedRoles'])) $f->value = $data['allowedRoles'];
+        $inputfields->add($f);    
         
         // Usage notes
         $f = $this->modules->get('InputfieldMarkup'); 

@@ -5,6 +5,8 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 ### Changelogs
 
+[V0.1.6] - "Admitted" roles to view the drop down-menu (useful for testing or pre-prod).
+
 [V0.1.5] - "Surgical" override for specific starting language.
 
 Added public function ```isEnabled()``` to check via API if the module is enabled (useful in conditions for outputting something else in case the module is not enabled, but still installed).

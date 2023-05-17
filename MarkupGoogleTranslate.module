@@ -7,7 +7,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         'title' => 'Google Page Translate',
         'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
         'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting www.newmc.it',
-        'version' => 15,
+        'version' => 16,
     ];
     }
 
@@ -21,6 +21,21 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
     public function isEnabled(){
         if ($this->enable == 1) return true;
     }
+    /**
+     *  Check if user is allowed by restrict role settings
+     */
+    public function isUserAllowed(){
+        $allowed  = false;
+        foreach (wire('user')->roles as $role => $dataRole){
+                if (in_array($dataRole->id, $this->allowedRoles)){
+                    $allowed = true;
+                    break;
+                }
+        }
+        if (empty($this->allowedRoles)) $allowed = true;
+        if($allowed != true) return;
+        return $allowed;
+    }    
 
     public function buildGoogleTranslateUrl($languageIsoCode) {
 
@@ -104,6 +119,8 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
      * @param array $specific = set a two letters ISO code for single and specific language (useful in case of specific translation for single pages)
      */
     public function displayTranslateWidget(array $specific = []) {
+
+        if (!$this->isUserAllowed()) return;
 
         if ($this->enable == 0) return;
 
