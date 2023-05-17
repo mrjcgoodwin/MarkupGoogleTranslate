@@ -54,9 +54,10 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f = wire('modules')->get('InputfieldAsmSelect');
         $f->name = 'allowedRoles';
         $f->icon = 'users';
+		  $f->notes = 'If blank, all roles are enabled.';
         $f->columnWidth = 50;
         $f->showIf = 'enable=1';
-        $f->label = 'Restrict roles';
+        $f->label = 'Restricted roles';
         $f->description = 'Roles enabled to view the language select';
         $allRoles = wire('roles')->find('sort=id');
         // $this->warning($allRoles);
