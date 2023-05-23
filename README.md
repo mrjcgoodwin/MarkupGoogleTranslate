@@ -9,7 +9,7 @@ Original repo at: https://github.com/mrjcgoodwin/MarkupGoogleTranslate/
 
 [V0.1.6] - "Admitted" roles to view the drop down-menu (useful for testing or pre-prod).
 
-Added public function ```isUserAllowed()``` to check via API if the user that are viewing he site is admitted to view the drop-down language select (useful for testing).
+Added public function ```isUserAllowed()``` to check via API if the user that is viewing he site is admitted to view the drop-down language select (useful for testing).
 
 ![screenshot](https://github.com/cybermano/MarkupGoogleTranslate/blob/master/ModuleGooglePageTranslate_newmc_V016.png?raw=true)
 
