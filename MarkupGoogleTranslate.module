@@ -1,187 +1,388 @@
 <?php namespace ProcessWire;
 
-class MarkupGoogleTranslate extends Process implements Module {
+class MarkupGoogleTranslate extends Process implements Module, ConfigurableModule {
 
-  public static function getModuleinfo() {
+    public static function getModuleinfo() {
     return [
-      'title' => 'Google Page Translate',
-      'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages.',
-      'author' => 'Jonathan Goodwin, warp-design.co.uk',
-      'version' => 0.1,
+        'title' => 'Google Page Translate',
+        'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
+        'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting www.newmc.it',
+        'version' => 16,
     ];
-  }
+    }
 
-  //Utility to clean the URL to match the format Google Likes
-  private function cleanUrl($url) {
-    $cleanUrl = str_replace('-','--',$url);
-    $cleanUrl = str_replace('.','-',$cleanUrl);
-    return $cleanUrl;
-  }
+    //Utility to clean the URL to match the format Google Likes
+    private function cleanUrl($url) {
+        $cleanUrl = str_replace('.','-',$url);
+        return $cleanUrl;
+    }
 
-  public function buildGoogleTranslateUrl($languageIsoCode) {
+    // Public check if Module is also enabled
+    public function isEnabled(){
+        if ($this->enable == 1) return true;
+    }
+    /**
+     *  Check if user is allowed by restrict role settings
+     */
+    public function isUserAllowed(){
+        $allowed  = false;
+        foreach (wire('user')->roles as $role => $dataRole){
+                if (in_array($dataRole->id, $this->allowedRoles)){
+                    $allowed = true;
+                    break;
+                }
+        }
+        if (empty($this->allowedRoles)) $allowed = true;
+        if($allowed != true) return;
+        return $allowed;
+    }    
 
-    //Get current page URL
-    $currentPagePath = wire('page')->url;
+    public function buildGoogleTranslateUrl($languageIsoCode) {
+
+        // User language for Starting language to pass to Google Translate
+        (wire('user')->language->name == 'default') ? $userLang = $this->default_name : $userLang = wire('user')->language->name;
+        ($userLang == '') ? $userLang = 'en' : null;
+
+        // Set starting language by surgical override
+        if($this->surgical_starting != ''){            
+
+            $ids = []; 
+
+            $pageChunks = explode(PHP_EOL,$this->surgical_starting);
+
+            $surgical_starting = [];
+            
+            foreach($pageChunks as $group){            
+
+                $condition = explode('=',$group); 
+
+                if (strpos($condition[0], '|') !== false){
+                    $arr = explode('|',$condition[0]);
+                    foreach($arr as $a){
+                        array_push($ids,intval($a));
+                        $surgical_starting[$a] = $condition[1];
+                    }
+                }
+                elseif (strpos($condition[0], '-') !== false){
+                    $boundaries = explode('-',$condition[0]);
+                    $arr = range($boundaries[0],$boundaries[1]);
+                    foreach($arr as $a){
+                        array_push($ids,intval($a));
+                        $surgical_starting[$a] = $condition[1];
+                    }
+                } 
+                else {
+                    array_push($ids,intval($condition[0]));
+                    $surgical_starting[intval($condition[0])] = $condition[1];
+                }       
+            }
+ 
+            if (is_array($ids)){
+                if(in_array(wire('page')->id,$ids)) $userLang = $surgical_starting[wire('page')->id];
+            } else {
+                if(wire('page')->id == $ids) $userLang = $surgical_starting[wire('page')->id];
+            }
+
+        } // surgical_starting        
+
+        //Get current page URL
+        $currentPagePath = wire('page')->url;
+
+        /*
+        - Clean the URL to match the format Google Likes
+        - But ignore home page to avoid outputting an unnecessary extra '/' later on
+        */
+        if ($currentPagePath != '/') {
+            $currentPagePath = $this->cleanUrl($currentPagePath);
+        } else {
+            $currentPagePath = '';
+        }
+
+        //Get host domain
+        $host = $this->cleanUrl(wire('config')->httpHost);
+        
+        /**
+         *  It seems that Google accept only SSL cerificates (only https, not http)
+         */
+        //Check if we're using http/https
+        $rootUrl = wire('pages')->get('/')->httpUrl;
+        $scheme = (strpos($rootUrl,'https') !== false) ? 'https' : 'http' ;
+
+        //Combine to build the translate URL
+        $translateUrl = 'https://'.$host.'.translate.goog'.$currentPagePath.'?_x_tr_sch='.$scheme.'&_x_tr_sl='.$userLang.'&_x_tr_tl='.$languageIsoCode.'&_x_tr_hl='.$languageIsoCode.'&_x_tr_pto=wapp';
+
+        return $translateUrl;
+      
+    }
+
+    /**
+     * @param array $specific = set a two letters ISO code for single and specific language (useful in case of specific translation for single pages)
+     */
+    public function displayTranslateWidget(array $specific = []) {
+
+        if (!$this->isUserAllowed()) return;
+
+        if ($this->enable == 0) return;
+
+            //Compile the available languages as select field options
+            $options = '';
+            // use defaults or custom argument passed
+            // if no languages selected, show all
+            empty($this->custom_languages) ? $custom_languages = $this->languageCodeNativeNames() : $custom_languages = $this->custom_languages;
+
+            // Module override
+            if($this->overrides == 1){
+
+                $ids = [];
+
+                // TEMPLATES
+                if (!empty($this->multiple_override)){
+                    if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->multiple_override;
+                } else {
+                    if (in_array(wire('page')->template->id,$this->tpls)) $custom_languages = $this->languageCodeNativeNames();
+                }
+
+                if (!empty($this->single_override)){
+                    if (wire('page')->template->id == $this->tpl) $custom_languages = $this->single_override;
+                } else {
+                    if (wire('page')->template->id == $this->tpl) $custom_languages = $this->languageCodeNativeNames();
+                }
+
+                // PAGES
+                // Single Page ids
+                if (strpos($this->page_ids, '|') !== false) $ids = explode('|',$this->page_ids);
+
+                // Range of ids
+                if (strpos($this->page_ids, '-') !== false){
+                    $boundaries = explode('-',$this->page_ids);
+                    if (isset($boundaries[0]) && ($boundaries[0] != '') && isset($boundaries[1]) && ($boundaries[1] != '')){
+                        $ids = range($boundaries[0],$boundaries[1]);
+                    }
+                }
+                if (!isset($ids) && ($this->page_ids != '')){
+                    $ids = [$this->page_ids];
+                }
+
+                // Get override languages by tpls or page ids
+                if (isset($ids)){
+                    if (!empty($this->pages_override)){
+                        if (in_array(wire('page')->id,$ids)) $custom_languages = $this->pages_override;
+                    } else {
+                        if (in_array(wire('page')->id,$ids)) $custom_languages = $this->languageCodeNativeNames();
+                    }
+                }
+
+                // Surgical override
+                if (trim($this->surgical)){
+    
+                    $pageChunks = explode(PHP_EOL,$this->surgical);
+
+                    $surgical_languages = [];
+                    
+                    foreach($pageChunks as $group){
+
+                        $condition = explode('=',$group);
+
+                        if (strpos($condition[0], '|') !== false){
+                            $arr = explode('|',$condition[0]);
+                            foreach($arr as $a){
+                                array_push($ids,intval($a));
+                                $surgical_languages[$a] = explode('|',$condition[1]);
+                            }
+                        }
+                        elseif (strpos($condition[0], '-') !== false){
+                            $boundaries = explode('-',$condition[0]);
+                            $arr = range($boundaries[0],$boundaries[1]);
+                            foreach($arr as $a){
+                                array_push($ids,intval($a));
+                                $surgical_languages[$a] = explode('|',$condition[1]);
+                            }
+                        } 
+                        else {
+                            array_push($ids,intval($condition[0]));
+                            $surgical_languages[$condition[0]] = explode('|',$condition[1]);
+                        }         
+                    }                
+                    // If page is overrided, get language by the page id
+                    if (in_array(wire('page')->id,$ids)) $custom_languages = $surgical_languages[wire('page')->id];
+
+                } // surgical
+
+            }
+
+            // page code override
+            if (!empty($specific)) $custom_languages = $specific;
+            // build select options
+
+            foreach ($custom_languages as $code) {
+                $url = $this->buildGoogleTranslateUrl($code);
+                $label = $this->switchLangLabel($code);
+                $options .= '<option value="'.$url.'">'.$label.'</option>';
+            }
+
+            ($this->icon != 0) ? $icon = '<img class="" src="https://fonts.gstatic.com/s/i/productlogos/translate/v6/'.$this->icon_size.'px.svg" alt="Google Translate">' : $icon = '';
+
+            $out = '';
+            //Compile and output
+            if ($this->wrapper) $out .= '<div class="'.$this->div_classes.'">';
+            // Place icon on left
+            if ($this->icon == 1) $out .= $icon;
+            // Build Select
+            $out .= '<select class="'.$this->select_classes.'" onchange="location = this.options[this.selectedIndex].value;">';
+            // set first option label override
+            ($this->first_option == '') ? $label = 'Translate page' : $label = $this->first_option;
+            $out .= '<option>'.$label.'</option>';
+            $out .= $options;
+            $out .= '</select>';
+            // Place icon on right
+            if ($this->icon == 2) $out .= $icon;
+            if ($this->wrapper) $out .= '</div>';
+
+        return $out;
+    }
+
+    /**
+     * FRONT END option label as per module setting
+     */
+    public function switchLangLabel(string $code){
+        $arr = $this->languageCodeNativeNames();
+        switch($this->native){
+            case 0:
+                $label = strtoupper($code);
+                break;
+            case 1:
+                $label = $arr[$code]['name'];
+                break;
+            case 2:
+                $label = $arr[$code]['native'];
+                break;
+            case 3:
+                $label = $arr[$code]['name'] . ' - ' . $arr[$code]['native'];
+                break;
+            case 4:
+                $label = $arr[$code]['native'];
+                break;
+        }
+    return $label;
+    }
 
     /*
-    - Clean the URL to match the format Google Likes
-    - But ignore home page to avoid outputting an unnecessary extra '/' later on
+    Available language codes for translation based
+    on https://cloud.google.com/translate/docs/languages
+
+    Return array of language with "name" (English) and "native" indexes
     */
-    if ($currentPagePath != '/') {
-        $currentPagePath = $this->cleanUrl($currentPagePath);
-    } else {
-        $currentPagePath = '';
+    public function languageCodeNativeNames(){ 
+        return array(
+        "af"    => ["name" => "Afrikaans",              "native" => "Afrikaans"],
+        "sq"    => ["name" => "Albanian",               "native" => "Shqip"],   
+        "am"    => ["name" => "Amharic",                "native" => "አማርኛ"],   
+        "ar"    => ["name" => "Arabic",                 "native" => "العَرَبِيَّة"],   
+        "hy"    => ["name" => "Armenian",               "native" => "Հայերէն"],   
+        "az"    => ["name" => "Azerbaijani",            "native" => "آذربایجان - ;دیلی"],   
+        "eu"    => ["name" => "Basque",                 "native" => "Euskara"],
+        "be"    => ["name" => "Belarusian",             "native" => "Беларуская мова"],   
+        "bn"    => ["name" => "Bengali",                "native" => "বাংলা"],   
+        "bs"    => ["name" => "Bosnian",                "native" => "Bosanski"],   
+        "bg"    => ["name" => "Bulgarian",              "native" => "български език"],   
+        "ca"    => ["name" => "Catalan",                "native" => "Català"],   
+        "ceb"   => ["name" => "Cebuano" ,               "native" => "Sinugbuanong Binisayâ"],  
+        "zh-CN" => ["name" => "Chinese (Simplified)",   "native" => "简体中文"],
+        "zh-TW" => ["name" => "Chinese (Traditional)",  "native" => "繁体中文"],
+        "co"    => ["name" => "Corsican",               "native" => "Corsu"],   
+        "hr"    => ["name" => "Croatian",               "native" => "Hrvatski"],   
+        "cs"    => ["name" => "Czech",                  "native" => "Čeština"],   
+        "da"    => ["name" => "Danish",                 "native" => "Dansk"],   
+        "nl"    => ["name" => "Dutch",                  "native" => "Nederlands"],   
+        "en"    => ["name" => "English",                "native" => "English"],   
+        "eo"    => ["name" => "Esperanto",              "native" => "Esperanto"],   
+        "et"    => ["name" => "Estonian",               "native" => "Eesti Keel"],   
+        "fi"    => ["name" => "Finnish",                "native" => "Suomen Kieli"],   
+        "fr"    => ["name" => "French",                 "native" => "Français"],   
+        "fy"    => ["name" => "Frisian",                "native" => "Frysk"],   
+        "gl"    => ["name" => "Galician",               "native" => "Galego"],   
+        "ka"    => ["name" => "Georgian",               "native" => "ქართული"],   
+        "de"    => ["name" => "German",                 "native" => "Deutsch"],   
+        "el"    => ["name" => "Greek",                  "native" => "Νέα Ελληνικά"],   
+        "gu"    => ["name" => "Gujarati",               "native" => "ગુજરાતી"],   
+        "ht"    => ["name" => "Haitian Creole",         "native" => "Kreyòl Ayisyen"],   
+        "ha"    => ["name" => "Hausa",                  "native" => "Harshen Hausa"],   
+        "haw"   => ["name" => "Hawaiian" ,              "native" => "'Ōlelo Hawai'i"],  
+        "he"    => ["name" => "Hebrew",                 "native" => "עברית"],   
+        "hi"    => ["name" => "Hindi",                  "native" => "हिन्दी"],   
+        "hmn"   => ["name" => "Hmong" ,                 "native" => "Lus Hmoob"],  
+        "hu"    => ["name" => "Hungarian",              "native" => "Magyar Nyelv"],   
+        "is"    => ["name" => "Icelandic",              "native" => "Íslenska"],   
+        "ig"    => ["name" => "Igbo",                   "native" => "Asụsụ Igbo"],   
+        "id"    => ["name" => "Indonesian",             "native" => "Bahasa Indonesia"],   
+        "ga"    => ["name" => "Irish",                  "native" => "Gaeilge"],   
+        "it"    => ["name" => "Italian",                "native" => "Italiano"],   
+        "ja"    => ["name" => "Japanese",               "native" => "日本語"],   
+        "jv"    => ["name" => "Javanese",               "native" => "ꦧꦱꦗꦮ"],   
+        "kn"    => ["name" => "Kannada",                "native" => "ಕನ್ನಡ"],   
+        "kk"    => ["name" => "Kazakh",                 "native" => "қазақ тілі"],   
+        "km"    => ["name" => "Khmer",                  "native" => "ភាសាខ្មែរ"],   
+        "rw"    => ["name" => "Kinyarwanda",            "native" => "Ikinyarwanda"],   
+        "ko"    => ["name" => "Korean",                 "native" => "한국어"],   
+        "ku"    => ["name" => "Kurdish",                "native" => "Kurdî"],   
+        "ky"    => ["name" => "Kyrgyz",                 "native" => "кыргызча"],   
+        "lo"    => ["name" => "Lao",                    "native" => "ພາສາລາວ"],   
+        "la"    => ["name" => "Latin",                  "native" => "Lingua latīna"],   
+        "lv"    => ["name" => "Latvian",                "native" => "Latviešu valoda"],   
+        "lt"    => ["name" => "Lithuanian",             "native" => "Lietuvių Kalba"],   
+        "lb"    => ["name" => "Luxembourgish",          "native" => "Lëtzebuergesch"],   
+        "mk"    => ["name" => "Macedonian",             "native" => "македонски јазик"],   
+        "mg"    => ["name" => "Malagasy",               "native" => "Malagasy"],   
+        "ms"    => ["name" => "Malay",                  "native" => "Bahasa Melayu"],   
+        "ml"    => ["name" => "Malayalam",              "native" => "മലയാളം"],   
+        "mt"    => ["name" => "Maltese",                "native" => "Malti"],   
+        "mi"    => ["name" => "Maori",                  "native" => "Te Reo Māori"],   
+        "mr"    => ["name" => "Marathi",                "native" => "मराठी"],   
+        "mn"    => ["name" => "Mongolian",              "native" => "монгол хэл"],   
+        "my"    => ["name" => "Myanmar (Burmese)",      "native" => "မြန်မာစာ"],   
+        "ne"    => ["name" => "Nepali",                 "native" => "नेपाली भाषा"],   
+        "no"    => ["name" => "Norwegian",              "native" => "Norsk"],   
+        "ny"    => ["name" => "Nyanja (Chichewa)",      "native" => "Chichewa"],   
+        "or"    => ["name" => "Odia (Oriya)",           "native" => "ଓଡ଼ିଆ"],   
+        "ps"    => ["name" => "Pashto",                 "native" => "پښتو"],   
+        "fa"    => ["name" => "Persian",                "native" => "فارسی"],   
+        "pl"    => ["name" => "Polish",                 "native" => "Język polski"],   
+        "pt"    => ["name" => "Portuguese",             "native" => "Português"],   
+        "pa"    => ["name" => "Punjabi",                "native" => "ਪੰਜਾਬੀ"],   
+        "ro"    => ["name" => "Romanian",               "native" => "Limba Română"],   
+        "ru"    => ["name" => "Russian",                "native" => "русский"],   
+        "sm"    => ["name" => "Samoan",                 "native" => "Gagana faʻa Sāmoa"],   
+        "gd"    => ["name" => "Scots Gaelic",           "native" => "Gàidhlig"],   
+        "sr"    => ["name" => "Serbian",                "native" => "српски"],   
+        "st"    => ["name" => "Sesotho",                "native" => "Sesotho"],   
+        "sn"    => ["name" => "Shona",                  "native" => "ChiShona"],   
+        "sd"    => ["name" => "Sindhi",                 "native" => "سنڌي"],   
+        "si"    => ["name" => "Sinhala (Sinhalese)",    "native" => "සිංහල"],   
+        "sk"    => ["name" => "Slovak",                 "native" => "Slovenčina"],   
+        "sl"    => ["name" => "Slovenian",              "native" => "Slovenski jezik"],   
+        "so"    => ["name" => "Somali",                 "native" => "Af Soomaali"],   
+        "es"    => ["name" => "Spanish",                "native" => "Español"],   
+        "su"    => ["name" => "Sundanese",              "native" => "Basa Sunda"],   
+        "sw"    => ["name" => "Swahili",                "native" => "Kiswahili"],   
+        "sv"    => ["name" => "Swedish",                "native" => "Svenska"],   
+        "tl"    => ["name" => "Tagalog (Filipino)",     "native" => "Wikang Tagalog"],   
+        "tg"    => ["name" => "Tajik",                  "native" => "Tajik"],   
+        "ta"    => ["name" => "Tamil",                  "native" => "தமிழ்"],   
+        "tt"    => ["name" => "Tatar",                  "native" => "татар теле"],   
+        "te"    => ["name" => "Telugu",                 "native" => "తెలుగు"],   
+        "th"    => ["name" => "Thai",                   "native" => "ภาษาไทย"],   
+        "tr"    => ["name" => "Turkish",                "native" => "Türkçe"],   
+        "tk"    => ["name" => "Turkmen",                "native" => "Türkmençe"],   
+        "uk"    => ["name" => "Ukrainian",              "native" => "Українська мова"],
+        "ur"    => ["name" => "Urdu",                   "native" => "اُردُو"],
+        "ug"    => ["name" => "Uyghur",                 "native" => "ئۇيغۇر تىلى"],
+        "uz"    => ["name" => "Uzbek",                  "native" => "O'zbekcha"],
+        "vi"    => ["name" => "Vietnamese",             "native" => "Tiếng Việt"],
+        "cy"    => ["name" => "Welsh",                  "native" => "Cymraeg"],   
+        "xh"    => ["name" => "Xhosa",                  "native" => "isXhosa"],   
+        "yi"    => ["name" => "Yiddish",                "native" => "אידיש"],   
+        "yo"    => ["name" => "Yoruba",                 "native" => "èdè Yorùbá"],   
+        "zu"    => ["name" => "Zulu",                   "native" => "IsiZulu"],   
+        );
     }
-
-    //Get host domain
-    $host = $this->cleanUrl(wire('config')->httpHost);
-
-    //Check if we're using http/https
-    $rootUrl = wire('pages')->get('/')->httpUrl;
-    $scheme = (strpos($rootUrl,'https') !== false) ? 'https' : 'http' ;
-
-    //Combine to build the translate URL
-    $translateUrl = 'https://'.$host.'.translate.goog/'.$currentPagePath.'?_x_tr_sch=http&_x_tr_sl=en&_x_tr_tl='.$languageIsoCode.'&_x_tr_hl=en&_x_tr_pto=wapp';
-
-    return $translateUrl;
-
-  }
-
-  /*
-  Available language codes for translation based
-  on https://cloud.google.com/translate/docs/languages
-  */
-  private function availableLanguages() {
-
-    return array(
-        "Afrikaans" => "af",
-        "Albanian" => "sq",
-        "Amharic" => "am",
-        "Arabic" => "ar",
-        "Armenian" => "hy",
-        "Azerbaijani" => "az",
-        "Basque" => "eu",
-        "Belarusian" => "be",
-        "Bengali" => "bn",
-        "Bosnian" => "bs",
-        "Bulgarian" => "bg",
-        "Catalan" => "ca",
-        "Cebuano" => "ceb",
-        "Chinese (Simplified)" => "zh-CN",
-        "Chinese (Traditional)" => "zh-TW",
-        "Corsican" => "co",
-        "Croatian" => "hr",
-        "Czech" => "cs",
-        "Danish" => "da",
-        "Dutch" => "nl",
-        "English" => "en",
-        "Esperanto" => "eo",
-        "Estonian" => "et",
-        "Finnish" => "fi",
-        "French" => "fr",
-        "Frisian" => "fy",
-        "Galician" => "gl",
-        "Georgian" => "ka",
-        "German" => "de",
-        "Greek" => "el",
-        "Gujarati" => "gu",
-        "Haitian Creole" => "ht",
-        "Hausa" => "ha",
-        "Hawaiian" => "haw",
-        "Hebrew" => "he",
-        "Hindi" => "hi",
-        "Hmong" => "hmn",
-        "Hungarian" => "hu",
-        "Icelandic" => "is",
-        "Igbo" => "ig",
-        "Indonesian" => "id",
-        "Irish" => "ga",
-        "Italian" => "it",
-        "Japanese" => "ja",
-        "Javanese" => "jv",
-        "Kannada" => "kn",
-        "Kazakh" => "kk",
-        "Khmer" => "km",
-        "Kinyarwanda" => "rw",
-        "Korean" => "ko",
-        "Kurdish" => "ku",
-        "Kyrgyz" => "ky",
-        "Lao" => "lo",
-        "Latin" => "la",
-        "Latvian" => "lv",
-        "Lithuanian" => "lt",
-        "Luxembourgish" => "lb",
-        "Macedonian" => "mk",
-        "Malagasy" => "mg",
-        "Malay" => "ms",
-        "Malayalam" => "ml",
-        "Maltese" => "mt",
-        "Maori" => "mi",
-        "Marathi" => "mr",
-        "Mongolian" => "mn",
-        "Myanmar (Burmese)" => "my",
-        "Nepali" => "ne",
-        "Norwegian" => "no",
-        "Nyanja (Chichewa)" => "ny",
-        "Odia (Oriya)" => "or",
-        "Pashto" => "ps",
-        "Persian" => "fa",
-        "Polish" => "pl",
-        "Portuguese" => "pt",
-        "Punjabi" => "pa",
-        "Romanian" => "ro",
-        "Russian" => "ru",
-        "Samoan" => "sm",
-        "Scots Gaelic" => "gd",
-        "Serbian" => "sr",
-        "Sesotho" => "st",
-        "Shona" => "sn",
-        "Sindhi" => "sd",
-        "Sinhala (Sinhalese)" => "si",
-        "Slovak" => "sk",
-        "Slovenian" => "sl",
-        "Somali" => "so",
-        "Spanish" => "es",
-        "Sundanese" => "su",
-        "Swahili" => "sw",
-        "Swedish" => "sv",
-        "Tagalog (Filipino)" => "tl",
-        "Tajik" => "tg",
-        "Tamil" => "ta",
-        "Tatar" => "tt",
-        "Telugu" => "te",
-        "Thai" => "th",
-        "Turkish" => "tr",
-        "Turkmen" => "tk",
-        "Ukrainian" => "uk",
-        "Urdu" => "ur",
-        "Uyghur" => "ug",
-        "Uzbek" => "uz",
-        "Vietnamese" => "vi",
-        "Welsh" => "cy",
-        "Xhosa" => "xh",
-        "Yiddish" => "yi",
-        "Yoruba" => "yo",
-        "Zulu" => "zu",
-    );
-  }
-
-  public function displayTranslateWidget() {
-
-    //Compile the available languages as select field options
-    $options = '';
-    foreach ($this->availableLanguages() as $title => $code) {
-        $url = $this->buildGoogleTranslateUrl($code);
-        $options .= '<option value="'.$url.'">'.$title.'</option>';
-    }
-
-    //Compile and output
-    $out = '<select onchange="location = this.options[this.selectedIndex].value;">';
-    $out .= '<option>Translate Page</option>';
-    $out .= $options;
-    $out .= '</select>';
-
-    return $out;
-  }
-
 }
