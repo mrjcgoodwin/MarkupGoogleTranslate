@@ -139,7 +139,7 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->description = 'Select one or more languages to show in drop-down select options list';
         $f->notes = 'If blank, all available languages are populated as select options
         
-        Into template page, it could be overrided by passing an array of ISO codes eg.:
+        Into template page, it could be overridden by passing an array of ISO codes eg.:
         ```$translateModule = wire("modules")->get("MarkupGoogleTranslate");```
         ```echo $translateModule->displayTranslateWidget(["es","fr"]);```';
         foreach ($availableLanguages as $code => $names){    
@@ -255,7 +255,7 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->name = 'tpls';
         $f->icon = 'cubes'; 
         $f->label = 'Page templates for specific translations';
-        $f->description = 'Select which templates will be overrided';
+        $f->description = 'Select which templates will be overridden';
             $asmOptions = [];
             // template.flags!=8  == template!=admin 
             $limitedPages = wire('pages')->find('template!=admin, status!=unpublished, status!=hidden, has_parent!=2, include=all, sort=template.name');
@@ -273,7 +273,7 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->name = 'multiple_override';    
         $f->icon = 'language';
         $f->columnWidth = 50;
-        $f->label = 'Languages to display into select options for Overrided templates';
+        $f->label = 'Languages to display into select options for overridden templates';
         $f->description = 'Select one or more languages to show in drop-down select options list';
         $f->notes = 'If blank, all available languages are populated as select options';
         $f->showIf = 'overrides=1';
@@ -298,7 +298,7 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->name = 'tpl';
         $f->icon = 'cube'; 
         $f->label = 'Single template for specific translations';
-        $f->description = 'Select which template will be overrided';
+        $f->description = 'Select which template will be overridden';
             $asmOptions = [];
             // template.flags!=8  == template!=admin 
             $limitedPages = wire('pages')->find('template!=admin, status!=unpublished, status!=hidden, has_parent!=2, include=all, sort=template.name');
