@@ -217,7 +217,6 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
             if (!empty($specific)) $custom_languages = $specific;
             // build select options
 
-
             foreach ($custom_languages as $code) {
                 $url = $this->buildGoogleTranslateUrl($code);
                 $label = $this->switchLangLabel($code);
