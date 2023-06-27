@@ -7,7 +7,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
         'title' => 'Google Page Translate',
         'summary' => 'Provides a simple interface for site visitors to translate the current page to Google supported languages. (Github fork by NewMediaConsulting for multilanguage support: https://github.com/cybermano/MarkupGoogleTranslate)',
         'author' => 'Jonathan Goodwin warp-design.co.uk & NewMediaConsulting www.newmc.it',
-        'version' => 16,
+        'version' => 18,
     ];
     }
 
@@ -26,13 +26,16 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
      */
     public function isUserAllowed(){
         $allowed  = false;
-        foreach (wire('user')->roles as $role => $dataRole){
-                if (in_array($dataRole->id, $this->allowedRoles)){
-                    $allowed = true;
-                    break;
-                }
+        if (!empty($this->allowedRoles)){
+            foreach (wire('user')->roles as $role => $dataRole){
+                    if (in_array($dataRole->id, $this->allowedRoles)){
+                        $allowed = true;
+                        break;
+                    }
+            }
+        } else {
+            $allowed = true;
         }
-        if (empty($this->allowedRoles)) $allowed = true;
         if($allowed != true) return;
         return $allowed;
     }    
@@ -213,6 +216,7 @@ class MarkupGoogleTranslate extends Process implements Module, ConfigurableModul
             // page code override
             if (!empty($specific)) $custom_languages = $specific;
             // build select options
+
 
             foreach ($custom_languages as $code) {
                 $url = $this->buildGoogleTranslateUrl($code);
