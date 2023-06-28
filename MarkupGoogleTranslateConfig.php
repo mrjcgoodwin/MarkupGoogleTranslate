@@ -274,7 +274,7 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->name = 'multiple_override';    
         $f->icon = 'language';
         $f->columnWidth = 50;
-        $f->label = 'Languages to display into select options for Overridden templates';
+        $f->label = 'Languages to display into select options for overridden templates';
         $f->description = 'Select one or more languages to show in drop-down select options list';
         $f->notes = 'If blank, all available languages are populated as select options';
         $f->showIf = 'overrides=1';
