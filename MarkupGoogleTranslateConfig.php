@@ -122,7 +122,7 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->addOption(3,'English and Native names (eg. "Italian - Italiano")'); 
         $f->addOption(4,'English in admin back-end, Native in front-end'); 
         $f->attr('value', 0); 
-        $f->notes = 'Saving this setting, will also reflect the preview in the language selects'; 
+        $f->notes = '```Before saving, set at least one language alongside.``` Then the select will reflects the changes.'; 
         if(isset($data['native'])) $f->value = $data['native'];        
         $f->optionColumns = 0; 
         $f->columnWidth = 50; 
@@ -135,6 +135,7 @@ $text .= '<pre>if (wire("modules")->isInstalled("MarkupGoogleTranslate")) {
         $f->name = 'custom_languages';    
         $f->icon = 'language';
         $f->columnWidth = 50;
+        $f->required = 1;
         $f->label = 'Languages to display into select options';
         $f->description = 'Select one or more languages to show in drop-down select options list';
         $f->notes = 'If blank, all available languages are populated as select options
